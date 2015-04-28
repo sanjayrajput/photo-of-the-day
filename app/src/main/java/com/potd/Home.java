@@ -1,7 +1,11 @@
 package com.potd;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.potd.adapters.PicDetailsAdapter;
 import com.potd.models.PicDetailTable;
@@ -24,9 +29,14 @@ public class Home extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!isNetworkConnected()) {
+            Toast.makeText(this, "No Internet Connection",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         setContentView(R.layout.activity_home);
         final ListView picList = (ListView) findViewById(R.id.picsList);
-
         GlobalResources.setImages(new LruCache<String, Bitmap>(Configuration.cacheSize));
         GlobalResources.setPicDetailList(new ArrayList<PicDetailTable>());
         runOnUiThread(new Runnable() {
@@ -61,5 +71,17 @@ public class Home extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network = cm.getActiveNetworkInfo();
+        return network != null;
     }
 }

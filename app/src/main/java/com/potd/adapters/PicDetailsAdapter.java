@@ -1,6 +1,8 @@
 package com.potd.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.potd.FullScreen;
 import com.potd.GlobalResources;
 import com.potd.core.ImageDownloaderTask;
 import com.potd.R;
@@ -28,17 +31,19 @@ import java.util.logging.Logger;
  */
 public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
 
-    private Context context;
+    private Context applicationContext;
+    private Context activityContext;
     private int resource;
     private List<PicDetailTable> picDetailTableList;
 
     private static final Logger logger = Logger.getLogger("PicDetailsAdapter");
 
-    public PicDetailsAdapter(Context context, int resource, List<PicDetailTable> objects) {
-        super(context, resource, objects);
-        this.context = context;
+    public PicDetailsAdapter(Context applicationContext, Context activityContext, int resource, List<PicDetailTable> objects) {
+        super(applicationContext, resource, objects);
+        this.applicationContext = applicationContext;
         this.resource = resource;
         this.picDetailTableList = objects;
+        this.activityContext = activityContext;
     }
 
     @Override
@@ -47,8 +52,8 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final LayoutInflater inflater = (LayoutInflater) applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(resource, parent, false);
         try {
             final PicDetailTable picDetailTable = picDetailTableList.get(position);
@@ -98,14 +103,36 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        new ImageDownloaderTask(image, loadingImage).execute(picDetailTable.getLink());
+                        new ImageDownloaderTask(image, loadingImage, "Home").execute(picDetailTable.getLink());
                     }
                 });
                 thread.start();
+//                Picasso.with(context).load(picDetailTable.getLink()).into(image); TODO : Explore Picasso
             }
+
+            image.setOnClickListener(new ImageOnClickListener(position));
+            loadingImage.setOnClickListener(new ImageOnClickListener(position));
         } catch (Exception e) {
             logger.info("Failed to load image : " + e.getMessage());
         }
         return row;
+    }
+
+    public class ImageOnClickListener implements View.OnClickListener {
+        int position;
+
+        public ImageOnClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(applicationContext, FullScreen.class);
+            intent.putExtra("position", position);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Activity ac = (Activity) activityContext;
+            ac.startActivity(intent);
+            ac.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
     }
 }

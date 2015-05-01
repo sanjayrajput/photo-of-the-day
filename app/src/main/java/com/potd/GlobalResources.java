@@ -8,6 +8,7 @@ import com.potd.core.DBManager;
 import com.potd.models.PicDetailTable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by sanjay.rajput on 27/04/15.
@@ -17,6 +18,7 @@ public class GlobalResources {
     private static DBManager dbManager;
     private static List<PicDetailTable> picDetailList;
     private static LruCache<String, Bitmap> images;
+    private static Set<String> downloadingImages;
     private static ProgressDialog loadingDialog;
     private static float scale = 0;
 
@@ -58,5 +60,13 @@ public class GlobalResources {
 
     public static void setScale(float scale) {
         GlobalResources.scale = scale;
+    }
+
+    public static Set<String> getDownloadingImages() {
+        return downloadingImages;
+    }
+
+    public static void setDownloadingImages(Set<String> downloadingImages) {
+        GlobalResources.downloadingImages = downloadingImages;
     }
 }

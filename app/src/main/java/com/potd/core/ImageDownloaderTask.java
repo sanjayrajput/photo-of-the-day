@@ -20,17 +20,24 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
     private ImageView imageView;
     private ImageView loadingAnimation;
+    private String activity;
 
-    public ImageDownloaderTask(ImageView view, ImageView animation) {
+    public ImageDownloaderTask(ImageView view, ImageView animation, String activity) {
         this.imageView = view;
         this.loadingAnimation = animation;
+        this.activity = activity;
     }
 
     @Override
     protected Bitmap doInBackground(String... params) {
         String imageUrl = params[0];
-        Bitmap imageBitmap = null;
 
+        if (GlobalResources.getDownloadingImages().contains(imageUrl) && activity != null && !activity.equalsIgnoreCase("FullScreen")) {
+            Log.i("ImageDownloaderTask", "Already downloading image for url : " + imageUrl);
+            return null;
+        }
+        GlobalResources.getDownloadingImages().add(imageUrl);
+        Bitmap imageBitmap = null;
         boolean imageDownloaded = false;
         int retryCount = 5;
         while (!imageDownloaded && retryCount > 0) {
@@ -45,10 +52,10 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
                 images.put(imageUrl, imageBitmap);
 
                 imageDownloaded = true;
-                retryCount--;
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 Log.i("Info", "Downloading again...");
+                retryCount--;
             }
         }
         return imageBitmap;
@@ -56,12 +63,17 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        loadingAnimation.setBackgroundResource(0);
-        imageView.setImageBitmap(bitmap);
 
-        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        imageView.setLayoutParams(layoutParams);
-        imageView.requestLayout();
+        if (bitmap != null) {
+            loadingAnimation.setBackgroundResource(0);
+            imageView.setImageBitmap(bitmap);
+
+            if (activity.equalsIgnoreCase("Home")) {
+                ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                imageView.setLayoutParams(layoutParams);
+                imageView.requestLayout();
+            }
+        }
     }
 }

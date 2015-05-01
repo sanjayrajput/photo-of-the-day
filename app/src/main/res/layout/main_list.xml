@@ -1,44 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view1"
+    <RelativeLayout
+        android:id="@+id/rl1"
         android:layout_width="fill_parent"
-        android:layout_height="400dp"
-        card_view:cardCornerRadius="0dp">
-
+        android:layout_height="wrap_content">
+       <ImageView
+           android:id="@+id/picofday"
+           android:adjustViewBounds="true"
+           android:scaleType="fitXY"
+           android:layout_height="270dp"
+           android:layout_width="fill_parent"
+           />
         <ImageView
-            android:id="@+id/picofday1"
-            android:layout_width="fill_parent"
-            android:layout_gravity="center"
-            android:layout_height="270dp"
-            android:src="@drawable/pod4"
-            />
+            android:id="@+id/loading_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="@color/cardview_dark_background"
+        android:fontFamily="@string/font_family"
+        android:text="April 28 TuesDay"
+        android:paddingTop="3dp"
+        android:paddingLeft="@dimen/text_left_margin"
+        android:paddingRight="@dimen/text_right_margin"
+        android:gravity="left"/>
 
-        <TextView
-            android:id="@+id/date1"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_gravity="center"
-            />
+    <TextView
+        android:id="@+id/subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="21sp"
+        android:textColor="@color/cardview_dark_background"
+        android:textStyle="bold"
+        android:fontFamily="@string/font_family"
+        android:gravity="left"
+        android:paddingLeft="@dimen/text_left_margin"
+        android:paddingRight="@dimen/text_right_margin"
+        android:text="Subject"/>
 
-        <TextView
-            android:id="@+id/subject1"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            />
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/cardview_dark_background"
+        android:fontFamily="@string/font_family"
+        android:gravity="left"
+        android:paddingLeft="@dimen/text_left_margin"
+        android:paddingRight="@dimen/text_right_margin"
+        android:paddingTop="@dimen/text_top_margin"
+        android:paddingBottom="3dp"
+        android:text="Description"/>
 
-        <TextView
-            android:id="@+id/description1"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            />
-    </android.support.v7.widget.CardView>
-</RelativeLayout>
+    <TextView
+        android:id="@+id/photographer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/material_blue_grey_800"
+        android:fontFamily="@string/font_family"
+        android:paddingLeft="@dimen/text_left_margin"
+        android:paddingRight="@dimen/text_right_margin"
+        android:paddingBottom="@dimen/text_bottom_margin"
+        android:gravity="left"
+        android:text=""/>
+
+</LinearLayout>

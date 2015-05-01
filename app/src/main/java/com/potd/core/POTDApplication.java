@@ -11,6 +11,7 @@ import com.potd.models.PicDetailTable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ public class POTDApplication extends Application {
         try {
             GlobalResources.setImages(new LruCache<String, Bitmap>(Configuration.cacheSize));
             GlobalResources.setPicDetailList(new ArrayList<PicDetailTable>());
+            GlobalResources.setDownloadingImages(new HashSet<String>());
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {

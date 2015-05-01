@@ -92,10 +92,10 @@ public class DBManager {
                     list.add(pdt);
                 }
                 queryFailed = false;
-                retryCount--;
             } catch(Exception e){
                 logger.log(Level.ALL, "Exception : Failed to add entry\n" + e.getMessage(), e);
                 Log.i("Info", "Trying again...");
+                retryCount--;
             }
         }
         return list;

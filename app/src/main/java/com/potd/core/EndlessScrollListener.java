@@ -4,8 +4,6 @@ import android.content.Context;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import com.potd.Configuration;
-
 /**
  * Created by sanjay.rajput on 01/05/15.
  */
@@ -15,12 +13,14 @@ public class EndlessScrollListener implements AbsListView.OnScrollListener {
     private int currentPage = 0;
     private int previousTotal = 0;
     private boolean loading = true;
-    private Context context;
+    private Context applicationContext;
     private ListView listView;
+    private Context activityContext;
 
-    public EndlessScrollListener(Context context, ListView listView) {
-        this.context = context;
+    public EndlessScrollListener(Context applicationContext, Context activityContext, ListView listView) {
+        this.applicationContext = applicationContext;
         this.listView = listView;
+        this.activityContext = activityContext;
     }
 
     public EndlessScrollListener(int visibleThreshold) {
@@ -40,7 +40,7 @@ public class EndlessScrollListener implements AbsListView.OnScrollListener {
             // I load the next page of gigs using a background task,
             // but you can call any function here.
             currentPage++;
-            new InitApplication(listView, context).execute(currentPage);
+            new InitApplication(listView, applicationContext, activityContext).execute(currentPage);
             loading = true;
         }
     }

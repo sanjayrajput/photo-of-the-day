@@ -9,7 +9,6 @@ import com.potd.Configuration;
 import com.potd.GlobalResources;
 import com.potd.R;
 import com.potd.adapters.PicDetailsAdapter;
-import com.potd.core.DBManager;
 import com.potd.models.PicDetailTable;
 
 import java.util.Collections;
@@ -24,11 +23,13 @@ import java.util.logging.Logger;
 public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable>> {
     private static final Logger logger = Logger.getLogger("InitApplication");
     private ListView listView;
-    private Context context;
+    private Context applicationContext;
+    private Context activityContext;
 
-    public InitApplication(ListView listView, Context context) {
+    public InitApplication(ListView listView, Context applicationContext, Context context) {
         this.listView = listView;
-        this.context = context;
+        this.applicationContext = applicationContext;
+        this.activityContext = context;
     }
 
     @Override
@@ -36,11 +37,13 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
         try {
             PicDetailsAdapter adapter = (PicDetailsAdapter) listView.getAdapter();
             if(adapter == null) {
-                adapter = new PicDetailsAdapter(context, R.layout.main_list2, picDetailTables);
+                adapter = new PicDetailsAdapter(applicationContext, activityContext, R.layout.main_list, picDetailTables);
                 listView.setAdapter(adapter);
             } else {
-                for (PicDetailTable p : picDetailTables) {
-                    adapter.add(p);
+                if (picDetailTables != null) {
+                    for (PicDetailTable p : picDetailTables) {
+                        adapter.add(p);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -59,8 +62,8 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                 GlobalResources.setDbManager(dbManager);
             }
 
-            if (isCurrentPageExistInCache(currentPage))
-                return GlobalResources.getPicDetailList();
+            if ((Configuration.maxPhotoCount < ((currentPage + 1) * Configuration.chunkSize)) || isCurrentPageExistInCache(currentPage))
+                return null;
 
             List<PicDetailTable> list = dbManager.getAllImages(currentPage * Configuration.chunkSize, Configuration.chunkSize);
             logger.info("Total Images fetched from DB : " + list.size());
@@ -77,8 +80,7 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
     public boolean isCurrentPageExistInCache(int page) {
         if (GlobalResources.getPicDetailList() != null &&
                 !GlobalResources.getPicDetailList().isEmpty() &&
-                (GlobalResources.getPicDetailList().size() >= ((page + 1) * Configuration.chunkSize)) &&
-                (Configuration.maxPhotoCount > ((page + 1) * Configuration.chunkSize))) {
+                (GlobalResources.getPicDetailList().size() >= ((page + 1) * Configuration.chunkSize))) {
             return true;
         }
         return false;

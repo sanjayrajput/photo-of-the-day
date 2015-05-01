@@ -6,7 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.util.LruCache;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 
@@ -32,7 +36,10 @@ public class FullScreen extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.pager_helper);
+
         Intent intent = getIntent();
         int position = intent.getIntExtra("position", 0);
 
@@ -65,9 +72,14 @@ public class FullScreen extends Activity {
                 }
             });
             thread.start();
-//                Picasso.with(context).load(picDetailTable.getLink()).into(image); TODO : Explore Picasso
         }
 
+        fullscreenImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fullscreenImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            }
+        });
     }
 
     @Override

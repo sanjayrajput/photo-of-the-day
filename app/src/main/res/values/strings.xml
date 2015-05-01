@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">Photo Of The Day - NatGeo</string>
+    <string name="app_name">Photo Of The Day - Nat Geo</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="about">About</string>
     <string name="font_family">sans-serif-thin</string>
     <integer name="loading_duration">50</integer>
+    <string name="title_activity_main1">Main1Activity</string>
 
 </resources>

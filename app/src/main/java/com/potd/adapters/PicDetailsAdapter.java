@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.provider.CalendarContract;
+import android.text.Html;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.potd.GlobalResources;
-import com.potd.ImageDownloaderTask;
+import com.potd.core.ImageDownloaderTask;
 import com.potd.R;
 import com.potd.models.PicDetailTable;
-import com.potd.models.PicDetails;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -44,6 +42,11 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
     }
 
     @Override
+    public void add(PicDetailTable object) {
+        super.add(object);
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(resource, parent, false);
@@ -56,6 +59,15 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
             TextView subject = (TextView) row.findViewById(R.id.subject);
             subject.setText(picDetailTable.getSubject());
 
+            if (picDetailTable.getPhotographer() != null) {
+                TextView photographer = (TextView) row.findViewById(R.id.photographer);
+                String html = "<html>" +
+                        "<p>Photography by - <i>" + picDetailTable.getPhotographer() + "</i><p>" +
+                        "</html>";
+                photographer.setText(Html.fromHtml(html));
+
+            }
+
             TextView date = (TextView) row.findViewById(R.id.date);
             DateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM");
             date.setText(dateFormat.format(picDetailTable.getDate()));
@@ -67,6 +79,8 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
             AnimationDrawable animation = (AnimationDrawable) loadingImage.getBackground();
             animation.start();
 
+            GlobalResources.getLoadingDialog().hide();
+
             LruCache<String, Bitmap> images = GlobalResources.getImages();
             Bitmap bitmap = images.get(picDetailTable.getLink());
             if (bitmap != null) {
@@ -74,6 +88,12 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
                 animation.stop();
                 loadingImage.setBackgroundResource(0);
                 image.setImageBitmap(bitmap);
+
+                ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                image.setLayoutParams(layoutParams);
+                image.requestLayout();
+
             } else {
                 Thread thread = new Thread(new Runnable() {
                     @Override

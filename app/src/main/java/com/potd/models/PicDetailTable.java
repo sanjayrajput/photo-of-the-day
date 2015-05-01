@@ -15,16 +15,26 @@ public class PicDetailTable {
     private Date date;
     private String link;
     private Bitmap bitmap;
+    private String photographer;
 
-    public PicDetailTable(String subject, String description, Date date, String link, Bitmap bitmap) {
+    public PicDetailTable(String subject, String description, Date date, String link, Bitmap bitmap, String photographer) {
         this.subject = subject;
         this.description = description;
         this.date = date;
         this.link = link;
         this.bitmap = bitmap;
+        this.photographer = photographer;
     }
 
     public PicDetailTable() {
+    }
+
+    public String getPhotographer() {
+        return photographer;
+    }
+
+    public void setPhotographer(String photographer) {
+        this.photographer = photographer;
     }
 
     public String get_id() {

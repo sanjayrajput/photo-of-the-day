@@ -1,4 +1,4 @@
-package com.potd;
+package com.potd.core;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -12,6 +12,8 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
+import com.potd.ApiException;
+import com.potd.Configuration;
 import com.potd.models.PicDetailTable;
 
 import java.io.ByteArrayOutputStream;
@@ -57,31 +59,44 @@ public class DBManager {
         }
     }
 
-    public List<PicDetailTable> getAllImages() {
+    public List<PicDetailTable> getAllImages(int offset, int size) {
         List<PicDetailTable> list = new ArrayList<>();
-        try {
-            Log.i("Info", "Get all images meta data from table");
-            DBCollection collection = database.getCollection(Configuration.main_table);
-            DBCursor dbObjects = collection.find();
-            while (dbObjects.hasNext()) {
-                PicDetailTable pdt = new PicDetailTable();
-                DBObject dbObject = dbObjects.next();
-                Object subject = dbObject.get("subject");
-                if (subject != null)
-                    pdt.setSubject(subject.toString());
-                Object description = dbObject.get("description");
-                if (description != null)
-                    pdt.setDescription(description.toString());
-                Object link = dbObject.get("link");
-                if (link != null)
-                    pdt.setLink(link.toString());
-                Object date = dbObject.get("date");
-                if (date != null)
-                    pdt.setDate((Date) date);
-                list.add(pdt);
+        boolean queryFailed = true;
+        int retryCount = 5;
+        while (queryFailed && retryCount > 0) {
+            try {
+                Log.i("Info", "Get Images meta data from table, offset " + offset + ", Size " + size);
+                DBCollection collection = database.getCollection(Configuration.main_table);
+                DBObject sortByDate = new BasicDBObject();
+                sortByDate.put("date", -1);
+
+                DBCursor dbObjects = collection.find().skip(offset).limit(size).sort(sortByDate);
+                while (dbObjects.hasNext()) {
+                    PicDetailTable pdt = new PicDetailTable();
+                    DBObject dbObject = dbObjects.next();
+                    Object subject = dbObject.get("subject");
+                    if (subject != null)
+                        pdt.setSubject(subject.toString());
+                    Object description = dbObject.get("description");
+                    if (description != null)
+                        pdt.setDescription(description.toString());
+                    Object link = dbObject.get("link");
+                    if (link != null)
+                        pdt.setLink(link.toString());
+                    Object date = dbObject.get("date");
+                    if (date != null)
+                        pdt.setDate((Date) date);
+                    Object photographer = dbObject.get("photographer");
+                    if (photographer != null)
+                        pdt.setPhotographer(photographer.toString());
+                    list.add(pdt);
+                }
+                queryFailed = false;
+                retryCount--;
+            } catch(Exception e){
+                logger.log(Level.ALL, "Exception : Failed to add entry\n" + e.getMessage(), e);
+                Log.i("Info", "Trying again...");
             }
-        } catch (Exception e) {
-            logger.log(Level.ALL, "Exception : Failed to add entry\n" + e.getMessage(), e);
         }
         return list;
     }

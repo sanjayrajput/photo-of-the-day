@@ -1,10 +1,14 @@
 package com.potd;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.LruCache;
 
-import com.potd.core.DBManager;
+import com.potd.core.InternalDBHelper;
+import com.potd.core.MongoDBManager;
 import com.potd.models.PicDetailTable;
 
 import java.util.List;
@@ -15,19 +19,20 @@ import java.util.Set;
  */
 public class GlobalResources {
 
-    private static DBManager dbManager;
+    private static MongoDBManager mongoDbManager;
     private static List<PicDetailTable> picDetailList;
-    private static LruCache<String, Bitmap> images;
+    private static LruCache<String, Bitmap> imageCache;
     private static Set<String> downloadingImages;
     private static ProgressDialog loadingDialog;
     private static float scale = 0;
+    private static InternalDBHelper internalDBHelper;
 
-    public static DBManager getDbManager() {
-        return dbManager;
+    public static MongoDBManager getMongoDbManager() {
+        return mongoDbManager;
     }
 
-    public static void setDbManager(DBManager dbManager) {
-        GlobalResources.dbManager = dbManager;
+    public static void setMongoDbManager(MongoDBManager mongoDbManager) {
+        GlobalResources.mongoDbManager = mongoDbManager;
     }
 
     public static List<PicDetailTable> getPicDetailList() {
@@ -38,12 +43,20 @@ public class GlobalResources {
         GlobalResources.picDetailList = picDetailList;
     }
 
-    public static LruCache<String, Bitmap> getImages() {
-        return images;
+    public static InternalDBHelper getInternalDBHelper() {
+        return internalDBHelper;
     }
 
-    public static void setImages(LruCache<String, Bitmap> images) {
-        GlobalResources.images = images;
+    public static void setInternalDBHelper(InternalDBHelper internalDBHelper) {
+        GlobalResources.internalDBHelper = internalDBHelper;
+    }
+
+    public static LruCache<String, Bitmap> getImageCache() {
+        return imageCache;
+    }
+
+    public static void setImageCache(LruCache<String, Bitmap> imageCache) {
+        GlobalResources.imageCache = imageCache;
     }
 
     public static ProgressDialog getLoadingDialog() {
@@ -68,5 +81,11 @@ public class GlobalResources {
 
     public static void setDownloadingImages(Set<String> downloadingImages) {
         GlobalResources.downloadingImages = downloadingImages;
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network = cm.getActiveNetworkInfo();
+        return network != null;
     }
 }

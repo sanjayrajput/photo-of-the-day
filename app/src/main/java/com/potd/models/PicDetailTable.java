@@ -16,12 +16,14 @@ public class PicDetailTable {
     private String link;
     private Bitmap bitmap;
     private String photographer;
+    private String name;
 
     public PicDetailTable(String subject, String description, Date date, String link, Bitmap bitmap, String photographer) {
         this.subject = subject;
         this.description = description;
         this.date = date;
         this.link = link;
+        this.name = getName(link);
         this.bitmap = bitmap;
         this.photographer = photographer;
     }
@@ -75,6 +77,7 @@ public class PicDetailTable {
 
     public void setLink(String link) {
         this.link = link;
+        this.name = getName(link);
     }
 
     public Bitmap getBitmap() {
@@ -83,5 +86,17 @@ public class PicDetailTable {
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName(String link) {
+        return link.substring(link.lastIndexOf('/') + 1);
     }
 }

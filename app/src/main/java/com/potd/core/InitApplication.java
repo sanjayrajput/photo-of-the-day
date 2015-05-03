@@ -7,10 +7,12 @@ import android.widget.ListView;
 import com.potd.ApiException;
 import com.potd.Configuration;
 import com.potd.GlobalResources;
+import com.potd.Home;
 import com.potd.R;
 import com.potd.adapters.PicDetailsAdapter;
 import com.potd.models.PicDetailTable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -54,19 +56,24 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
     @Override
     protected List<PicDetailTable> doInBackground(Object[] params) {
         try {
-            DBManager dbManager = GlobalResources.getDbManager();
+            List<PicDetailTable> list = new ArrayList<>();
             int currentPage = (int) params[0];
-            if (dbManager == null) {
-                dbManager = new DBManager();
-                dbManager.init();
-                GlobalResources.setDbManager(dbManager);
-            }
-
             if ((Configuration.maxPhotoCount < ((currentPage + 1) * Configuration.chunkSize)) || isCurrentPageExistInCache(currentPage))
                 return null;
 
-            List<PicDetailTable> list = dbManager.getAllImages(currentPage * Configuration.chunkSize, Configuration.chunkSize);
-            logger.info("Total Images fetched from DB : " + list.size());
+            if (GlobalResources.isNetworkConnected(applicationContext)) {
+                MongoDBManager mongoDbManager = GlobalResources.getMongoDbManager();
+                if (mongoDbManager == null) {
+                    mongoDbManager = new MongoDBManager();
+                    mongoDbManager.init();
+                    GlobalResources.setMongoDbManager(mongoDbManager);
+                }
+                list = mongoDbManager.getAllImages(currentPage * Configuration.chunkSize, Configuration.chunkSize);
+                logger.info("Total Images fetched from Server : " + list.size());
+
+            } else {
+                list = GlobalResources.getInternalDBHelper().getAll(currentPage * Configuration.chunkSize, Configuration.chunkSize);
+            }
             GlobalResources.getPicDetailList().addAll(list);
             return list;
         } catch (ApiException e) {

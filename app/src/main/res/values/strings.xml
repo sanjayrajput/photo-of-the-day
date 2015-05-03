@@ -3,6 +3,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_save">Save in SD Card</string>
+    <string name="action_view_in_gallery">View in Gallery</string>
+    <string name="action_set_wallpaper">Set as Wallpaper</string>
     <string name="about">About</string>
     <string name="font_family">sans-serif-thin</string>
     <integer name="loading_duration">50</integer>

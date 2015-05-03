@@ -1,23 +1,31 @@
 package com.potd;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.LruCache;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.potd.core.ImageDownloaderTask;
 import com.potd.models.PicDetailTable;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -26,11 +34,35 @@ import java.util.logging.Logger;
 public class FullScreen extends Activity {
 
     private static final Logger logger = Logger.getLogger("FullScreen");
+    private int position;
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.full_screen_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.save_image) {
+            saveImageInSDCard(true);
+            return true;
+        } else if (id == R.id.action_set_as_wallpaper) {
+            setImageAsWallpaper();
+            return true;
+        } else if (id == R.id.view_in_gallery) {
+            openImageInGallery();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -41,7 +73,8 @@ public class FullScreen extends Activity {
         setContentView(R.layout.pager_helper);
 
         Intent intent = getIntent();
-        int position = intent.getIntExtra("position", 0);
+        position = intent.getIntExtra("position", 0);
+
 
         final ImageView fullscreenImage = (ImageView) findViewById(R.id.imgDisplay);
         final ImageView loadingImage = (ImageView) findViewById(R.id.pageLoading);
@@ -53,8 +86,7 @@ public class FullScreen extends Activity {
         List<PicDetailTable> picDetailList = GlobalResources.getPicDetailList();
         final PicDetailTable picDetailTable = picDetailList.get(position);
 
-        LruCache<String, Bitmap> images = GlobalResources.getImages();
-        Bitmap bitmap = images.get(picDetailTable.getLink());
+        Bitmap bitmap = ImageDBHelper.getImage(picDetailTable.getLink());
 
         if (bitmap != null) {
 
@@ -68,7 +100,7 @@ public class FullScreen extends Activity {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    new ImageDownloaderTask(fullscreenImage, loadingImage, "FullScreen").execute(picDetailTable.getLink());
+                    new ImageDownloaderTask(fullscreenImage, loadingImage, "FullScreen", picDetailTable).execute();
                 }
             });
             thread.start();
@@ -85,5 +117,74 @@ public class FullScreen extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    public String saveImageInSDCard(boolean displayAlreadyExistToast) {
+        logger.info("Saving file in SD Card");
+        PicDetailTable picDetailTable = getCurrentPic();
+        Bitmap bitmap = picDetailTable.getBitmap();
+        String fileName = picDetailTable.getName();
+        String filePath = null;
+
+        if (fileName == null) {
+            Random rand = new Random();
+            fileName = "Nat_Geo_Photo_Of_The_Day_" + rand.nextInt() + ".jpg";
+        }
+        if (bitmap != null) {
+            File sdCardDirectory = Environment.getExternalStorageDirectory();
+            filePath = sdCardDirectory.getAbsolutePath() + "/Download";
+            boolean created = new File(filePath).mkdirs();
+            filePath += "/" + fileName;
+            logger.info("Path : " + filePath);
+            File image = new File(filePath);
+            if (image.exists()) {
+                Toast.makeText(getApplicationContext(),  "Image already exist with same name at " + filePath,
+                        Toast.LENGTH_LONG).show();
+                logger.info("Image already exist");
+                return filePath;
+            }
+            FileOutputStream outStream;
+            try {
+                outStream = new FileOutputStream(image);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+                outStream.flush();
+                outStream.close();
+                logger.info("Image saved at " + filePath);
+                Toast.makeText(getApplicationContext(),  "Image saved at " + filePath,
+                        Toast.LENGTH_LONG).show();
+            } catch (FileNotFoundException e) {
+                logger.info("File Not Found");
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to save image",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+        return filePath;
+    }
+
+    public void setImageAsWallpaper() {
+        WallpaperManager myWallpaperManager
+                = WallpaperManager.getInstance(getApplicationContext());
+        try {
+            myWallpaperManager.setBitmap(getCurrentPic().getBitmap());
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "Failed to set wallpaper",
+                    Toast.LENGTH_LONG).show();
+            logger.info("Failed to set background");
+        }
+    }
+
+    public void openImageInGallery() {
+        String filePath = saveImageInSDCard(false);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri fileUri = Uri.parse("file://" + filePath);
+        intent.setDataAndType(fileUri, "image/*");
+        startActivity(intent);
+    }
+
+    public PicDetailTable getCurrentPic() {
+        List<PicDetailTable> picDetailList = GlobalResources.getPicDetailList();
+        return picDetailList.get(position);
     }
 }

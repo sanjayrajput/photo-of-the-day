@@ -26,12 +26,12 @@ import java.util.logging.Logger;
 /**
  * Created by sanjay.rajput on 27/04/15.
  */
-public class DBManager {
+public class MongoDBManager {
 
     private DB database;
-    private static final Logger logger = Logger.getLogger("DBManager");
+    private static final Logger logger = Logger.getLogger("MongoDBManager");
 
-    public DBManager() {
+    public MongoDBManager() {
     }
 
     public String getURL() {

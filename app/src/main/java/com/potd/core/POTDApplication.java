@@ -28,9 +28,11 @@ public class POTDApplication extends Application {
         super.onCreate();
         logger.info("Starting application...");
         try {
-            GlobalResources.setImages(new LruCache<String, Bitmap>(Configuration.cacheSize));
+            GlobalResources.setImageCache(new LruCache<String, Bitmap>(Configuration.cacheSize));
             GlobalResources.setPicDetailList(new ArrayList<PicDetailTable>());
             GlobalResources.setDownloadingImages(new HashSet<String>());
+            GlobalResources.setInternalDBHelper(new InternalDBHelper(getApplicationContext()));
+
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {

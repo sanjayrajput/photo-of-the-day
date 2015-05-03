@@ -1,6 +1,7 @@
 package com.potd.adapters;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.potd.FullScreen;
 import com.potd.GlobalResources;
+import com.potd.ImageDBHelper;
 import com.potd.core.ImageDownloaderTask;
 import com.potd.R;
 import com.potd.models.PicDetailTable;
@@ -84,15 +86,16 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
             AnimationDrawable animation = (AnimationDrawable) loadingImage.getBackground();
             animation.start();
 
-            GlobalResources.getLoadingDialog().hide();
+            ProgressDialog d = GlobalResources.getLoadingDialog();
+            if (d != null)
+                d.hide();
 
-            LruCache<String, Bitmap> images = GlobalResources.getImages();
-            Bitmap bitmap = images.get(picDetailTable.getLink());
+            Bitmap bitmap = ImageDBHelper.getImage(picDetailTable.getLink());
             if (bitmap != null) {
-                logger.info("Found image in cache");
                 animation.stop();
                 loadingImage.setBackgroundResource(0);
                 image.setImageBitmap(bitmap);
+                picDetailTable.setBitmap(bitmap);
 
                 ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
                 layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -103,7 +106,7 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        new ImageDownloaderTask(image, loadingImage, "Home").execute(picDetailTable.getLink());
+                        new ImageDownloaderTask(image, loadingImage, "Home", picDetailTable).execute();
                     }
                 });
                 thread.start();
@@ -117,6 +120,8 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
         }
         return row;
     }
+
+
 
     public class ImageOnClickListener implements View.OnClickListener {
         int position;

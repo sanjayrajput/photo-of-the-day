@@ -3,15 +3,11 @@ package com.potd;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -22,11 +18,13 @@ import com.potd.core.InitApplication;
 import com.potd.models.PicDetailTable;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class Home extends Activity {
 
     public static Context appContext;
+    private static final Logger logger = Logger.getLogger("Home");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +35,14 @@ public class Home extends Activity {
         final float scale = this.getResources().getDisplayMetrics().density;
         GlobalResources.setScale(scale);
 
-        if (!isNetworkConnected()) {
+        if (!GlobalResources.isNetworkConnected(appContext)) {
             Toast.makeText(this, "No Internet Connection",
                     Toast.LENGTH_LONG).show();
-            return;
+
+        } else {
+            ProgressDialog pd = ProgressDialog.show(this, "Please Wait...", "loading", true);
+            GlobalResources.setLoadingDialog(pd);
         }
-        ProgressDialog pd = ProgressDialog.show(this, "Please Wait...", "loading", true);
-        GlobalResources.setLoadingDialog(pd);
 
         final ListView picList = (ListView) findViewById(R.id.picsList);
         runOnUiThread(new Runnable() {
@@ -101,9 +100,4 @@ public class Home extends Activity {
         }
     }
 
-    public boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo network = cm.getActiveNetworkInfo();
-        return network != null;
-    }
 }

@@ -90,10 +90,10 @@ public class InternalDBHelper {
         } catch (Exception e) {
             logger.info("Failed to get all images from local DB " + e.getMessage());
         }
-
+        if (list.isEmpty())
+            return list;
         if (start > list.size())
-            return null;
-
+            return list;
         int end = start + size;
         if (end > list.size())
             end = list.size();
@@ -111,7 +111,7 @@ public class InternalDBHelper {
     }
 
     public void sortDataByDate(List<PicDetailTable> list) {
-        if (list.size() > 0) {
+        if (list != null && list.size() > 0) {
             Collections.sort(list, new Comparator<PicDetailTable>() {
                 @Override
                 public int compare(final PicDetailTable object1, final PicDetailTable object2) {

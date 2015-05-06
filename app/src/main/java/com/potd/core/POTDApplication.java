@@ -32,6 +32,7 @@ public class POTDApplication extends Application {
             GlobalResources.setPicDetailList(new ArrayList<PicDetailTable>());
             GlobalResources.setDownloadingImages(new HashSet<String>());
             GlobalResources.setInternalDBHelper(new InternalDBHelper(getApplicationContext()));
+            GlobalResources.setDoneLoadingLocally(false);
 
             Thread thread = new Thread(new Runnable() {
                 @Override

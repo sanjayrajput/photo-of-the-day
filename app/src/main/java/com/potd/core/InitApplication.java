@@ -12,9 +12,13 @@ import com.potd.R;
 import com.potd.adapters.PicDetailsAdapter;
 import com.potd.models.PicDetailTable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +31,7 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
     private ListView listView;
     private Context applicationContext;
     private Context activityContext;
+    public static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
     public InitApplication(ListView listView, Context applicationContext, Context context) {
         this.listView = listView;
@@ -39,8 +44,10 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
         try {
             PicDetailsAdapter adapter = (PicDetailsAdapter) listView.getAdapter();
             if(adapter == null) {
-                adapter = new PicDetailsAdapter(applicationContext, activityContext, R.layout.main_list, picDetailTables);
-                listView.setAdapter(adapter);
+                if (picDetailTables != null) {
+                    adapter = new PicDetailsAdapter(applicationContext, activityContext, R.layout.main_list, picDetailTables);
+                    listView.setAdapter(adapter);
+                }
             } else {
                 if (picDetailTables != null) {
                     for (PicDetailTable p : picDetailTables) {
@@ -61,6 +68,38 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
             if ((Configuration.maxPhotoCount < ((currentPage + 1) * Configuration.chunkSize)) || isCurrentPageExistInCache(currentPage))
                 return null;
 
+            int start = currentPage * Configuration.chunkSize;
+            if (currentPage == 0) {
+                if (GlobalResources.getLoadingDialog().isShowing()) {
+                    list = GlobalResources.getInternalDBHelper().getAll(0, 10);
+                    Date today = df.parse(df.format(new Date()));
+                    int i = 0;
+                    for (PicDetailTable p : list) {
+                        if (p.getDate() != null && df.parse(df.format(p.getDate())).equals(today)) {
+                            i++;
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(today);
+                            cal.add(Calendar.DATE, -1);
+                            today = cal.getTime();
+                        } else {
+                            break;
+                        }
+                    }
+                    if (i != 0) {
+                        GlobalResources.getPicDetailList().addAll(list);
+                        GlobalResources.setIndexToStart(i);
+                    } else {
+                        GlobalResources.setDoneLoadingLocally(true);
+                    }
+                }
+                if (!GlobalResources.isDoneLoadingLocally()) {
+                    GlobalResources.setDoneLoadingLocally(true);
+                    return list;
+                } else {
+                    start = GlobalResources.getIndexToStart();
+                }
+            }
+
             if (GlobalResources.isNetworkConnected(applicationContext)) {
                 MongoDBManager mongoDbManager = GlobalResources.getMongoDbManager();
                 if (mongoDbManager == null) {
@@ -68,8 +107,9 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                     mongoDbManager.init();
                     GlobalResources.setMongoDbManager(mongoDbManager);
                 }
-                list = mongoDbManager.getAllImages(currentPage * Configuration.chunkSize, Configuration.chunkSize);
-                logger.info("Total Images fetched from Server : " + list.size());
+                list = mongoDbManager.getAllImages(start, Configuration.chunkSize);
+                if (list != null)
+                    logger.info("Total Images fetched from Server : " + list.size());
 
             } else {
                 list = GlobalResources.getInternalDBHelper().getAll(currentPage * Configuration.chunkSize, Configuration.chunkSize);

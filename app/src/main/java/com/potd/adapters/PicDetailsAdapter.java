@@ -53,6 +53,12 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
         super.add(object);
     }
 
+    public void updateList(List<PicDetailTable> list) {
+        picDetailTableList.clear();
+        picDetailTableList.addAll(list);
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final LayoutInflater inflater = (LayoutInflater) applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -90,7 +96,7 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
             if (d != null)
                 d.hide();
 
-            Bitmap bitmap = ImageDBHelper.getImage(picDetailTable.getLink());
+            Bitmap bitmap = ImageDBHelper.getFromCache(picDetailTable.getLink());
             if (bitmap != null) {
                 animation.stop();
                 loadingImage.setBackgroundResource(0);

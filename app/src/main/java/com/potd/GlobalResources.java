@@ -26,6 +26,8 @@ public class GlobalResources {
     private static ProgressDialog loadingDialog;
     private static float scale = 0;
     private static InternalDBHelper internalDBHelper;
+    private static boolean doneLoadingLocally;
+    private static int indexToStart = 0;
 
     public static MongoDBManager getMongoDbManager() {
         return mongoDbManager;
@@ -87,5 +89,21 @@ public class GlobalResources {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo network = cm.getActiveNetworkInfo();
         return network != null;
+    }
+
+    public static boolean isDoneLoadingLocally() {
+        return doneLoadingLocally;
+    }
+
+    public static void setDoneLoadingLocally(boolean doneLoadingLocally) {
+        GlobalResources.doneLoadingLocally = doneLoadingLocally;
+    }
+
+    public static int getIndexToStart() {
+        return indexToStart;
+    }
+
+    public static void setIndexToStart(int indexToStart) {
+        GlobalResources.indexToStart = indexToStart;
     }
 }

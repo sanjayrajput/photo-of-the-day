@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.potd.GlobalResources;
+import com.potd.ImageDBHelper;
 import com.potd.models.PicDetailTable;
 
 import java.io.InputStream;
@@ -38,6 +39,9 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
             Log.i("ImageDownloaderTask", "Already downloading image for url : " + imageUrl);
             return null;
         }
+        Bitmap bitmap = ImageDBHelper.getFromInternalStorage(imageUrl);
+        if (bitmap != null)
+            return bitmap;
 
         GlobalResources.getDownloadingImages().add(imageUrl);
         Bitmap imageBitmap = null;

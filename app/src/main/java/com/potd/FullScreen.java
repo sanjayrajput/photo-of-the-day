@@ -52,13 +52,16 @@ public class FullScreen extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.save_image) {
-            saveImageInSDCard(true);
+            saveImageInSDCard(true, true);
             return true;
         } else if (id == R.id.action_set_as_wallpaper) {
             setImageAsWallpaper();
             return true;
         } else if (id == R.id.view_in_gallery) {
             openImageInGallery();
+            return true;
+        } else if (id == R.id.image_share) {
+            shareImage();
             return true;
         }
 
@@ -112,6 +115,14 @@ public class FullScreen extends Activity {
                 fullscreenImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
             }
         });
+
+        fullscreenImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openOptionsMenu();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -119,7 +130,7 @@ public class FullScreen extends Activity {
         super.onStart();
     }
 
-    public String saveImageInSDCard(boolean displayAlreadyExistToast) {
+    public String saveImageInSDCard(boolean displayAlreadyExistToast, boolean displaySavingToast) {
         logger.info("Saving file in SD Card");
         PicDetailTable picDetailTable = getCurrentPic();
         Bitmap bitmap = picDetailTable.getBitmap();
@@ -138,7 +149,8 @@ public class FullScreen extends Activity {
             logger.info("Path : " + filePath);
             File image = new File(filePath);
             if (image.exists()) {
-                Toast.makeText(getApplicationContext(),  "Image already exist with same name at " + filePath,
+                if (displayAlreadyExistToast)
+                    Toast.makeText(getApplicationContext(),  "Image already exist with same name at " + filePath,
                         Toast.LENGTH_LONG).show();
                 logger.info("Image already exist");
                 return filePath;
@@ -150,7 +162,8 @@ public class FullScreen extends Activity {
                 outStream.flush();
                 outStream.close();
                 logger.info("Image saved at " + filePath);
-                Toast.makeText(getApplicationContext(),  "Image saved at " + filePath,
+                if (displaySavingToast)
+                    Toast.makeText(getApplicationContext(),  "Image saved at " + filePath,
                         Toast.LENGTH_LONG).show();
             } catch (FileNotFoundException e) {
                 logger.info("File Not Found");
@@ -175,11 +188,21 @@ public class FullScreen extends Activity {
     }
 
     public void openImageInGallery() {
-        String filePath = saveImageInSDCard(false);
+        String filePath = saveImageInSDCard(false, true);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         Uri fileUri = Uri.parse("file://" + filePath);
         intent.setDataAndType(fileUri, "image/*");
+        startActivity(intent);
+    }
+
+    public void shareImage() {
+        String filePath = saveImageInSDCard(false, false);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        Uri fileUri = Uri.parse("file://" + filePath);
+        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        intent.setType("image/jpeg");
         startActivity(intent);
     }
 

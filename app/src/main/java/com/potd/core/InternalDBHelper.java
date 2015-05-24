@@ -13,8 +13,10 @@ import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -26,8 +28,8 @@ public class InternalDBHelper {
 
     private SQLiteDatabase database;
     public static final String TABLE_NAME = "pic_details";
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
+    private static SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 
 
     public InternalDBHelper(Context context) {
@@ -54,11 +56,17 @@ public class InternalDBHelper {
             values.put("picture", stream.toByteArray());
             values.put("description", picDetailTable.getDescription());
             values.put("photographer", picDetailTable.getPhotographer());
-            values.put("date", dateFormat.format(picDetailTable.getDate()));
+            values.put("date", df1.format(picDetailTable.getDate()));
             database.insert(TABLE_NAME, null, values);
         } catch (Exception e) {
             logger.info("Failed to store image in local database");
         }
+    }
+
+    public void deleteImage(String link) {
+        logger.info("Deleting image for link : " + link);
+        int delete = database.delete(TABLE_NAME, "link=?", new String[]{link});
+        logger.info("Return Value : " + delete);
     }
 
     public PicDetailTable getImage(String link) {
@@ -74,14 +82,43 @@ public class InternalDBHelper {
         return null;
     }
 
+    public List<PicDetailTable> getByDate(Date date, int size) {
+        logger.info("Get All Images from Local Database from date " + date);
+        List<PicDetailTable> list = new ArrayList<>();
+        size--;
+        try {
+            String query = "SELECT subject, description, date, link, photographer FROM " + TABLE_NAME + " " +
+                    "WHERE date BETWEEN ? AND ? ORDER BY date DESC";
+            String date1 = df1.format(df2.parse(df2.format(date)));
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.DATE, -size);
+            date = cal.getTime();
+            String date2 = df1.format(df2.parse(df2.format(date)));
+
+            Cursor cursor = database.rawQuery(query, new String[]{date2, date1});
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                PicDetailTable picDetailTable = new PicDetailTable(cursor.getString(0), cursor.getString(1), df1.parse(cursor.getString(2)), cursor.getString(3), null, cursor.getString(4));
+                list.add(picDetailTable);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } catch (Exception e) {
+            logger.info("Failed to get all images from local DB " + e.getMessage());
+        }
+        return list;
+    }
+
+
     public List<PicDetailTable> getAll(int start, int size) {
         logger.info("Get All Images from Local Database...");
         List<PicDetailTable> list = new ArrayList<>();
         try {
-            Cursor cursor = database.query(TABLE_NAME, new String[]{"subject", "description", "date", "link", "picture", "photographer"}, null, null, null, null, null);
+            Cursor cursor = database.query(TABLE_NAME, new String[]{"subject", "description", "date", "link", "photographer"}, null, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                PicDetailTable picDetailTable = new PicDetailTable(cursor.getString(0), cursor.getString(1), dateFormat.parse(cursor.getString(2)), cursor.getString(3), null, cursor.getString(5));
+                PicDetailTable picDetailTable = new PicDetailTable(cursor.getString(0), cursor.getString(1), df1.parse(cursor.getString(2)), cursor.getString(3), null, cursor.getString(4));
                 list.add(picDetailTable);
                 cursor.moveToNext();
             }
@@ -103,7 +140,7 @@ public class InternalDBHelper {
     public PicDetailTable parsePicDetailTable(Cursor cursor) {
         try {
             Bitmap bmp = BitmapFactory.decodeByteArray(cursor.getBlob(4), 0, cursor.getBlob(4).length);
-            return new PicDetailTable(cursor.getString(0), cursor.getString(1), dateFormat.parse(cursor.getString(2)), cursor.getString(3), bmp, cursor.getString(5));
+            return new PicDetailTable(cursor.getString(0), cursor.getString(1), df1.parse(cursor.getString(2)), cursor.getString(3), bmp, cursor.getString(5));
         } catch (ParseException e) {
             logger.info("Failed to parse date : " + e.getMessage());
             return null;

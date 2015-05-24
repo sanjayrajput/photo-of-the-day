@@ -7,8 +7,8 @@ import android.widget.ListView;
 import com.potd.ApiException;
 import com.potd.Configuration;
 import com.potd.GlobalResources;
-import com.potd.Home;
 import com.potd.R;
+import com.potd.Utils;
 import com.potd.adapters.PicDetailsAdapter;
 import com.potd.models.PicDetailTable;
 
@@ -31,12 +31,14 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
     private ListView listView;
     private Context applicationContext;
     private Context activityContext;
+    private boolean isRefresh;
     public static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
     public InitApplication(ListView listView, Context applicationContext, Context context) {
         this.listView = listView;
         this.applicationContext = applicationContext;
         this.activityContext = context;
+        isRefresh = false;
     }
 
     @Override
@@ -52,6 +54,7 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                 if (picDetailTables != null) {
                     for (PicDetailTable p : picDetailTables) {
                         adapter.add(p);
+                        adapter.notifyDataSetChanged();
                     }
                 }
             }
@@ -65,54 +68,40 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
         try {
             List<PicDetailTable> list = new ArrayList<>();
             int currentPage = (int) params[0];
+            isRefresh = (boolean) params[1];
             if ((Configuration.maxPhotoCount < ((currentPage + 1) * Configuration.chunkSize)) || isCurrentPageExistInCache(currentPage))
                 return null;
 
             int start = currentPage * Configuration.chunkSize;
-            if (currentPage == 0) {
-                if (GlobalResources.getLoadingDialog().isShowing()) {
-                    list = GlobalResources.getInternalDBHelper().getAll(0, 10);
-                    Date today = df.parse(df.format(new Date()));
-                    int i = 0;
-                    for (PicDetailTable p : list) {
-                        if (p.getDate() != null && df.parse(df.format(p.getDate())).equals(today)) {
-                            i++;
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(today);
-                            cal.add(Calendar.DATE, -1);
-                            today = cal.getTime();
-                        } else {
-                            break;
-                        }
-                    }
-                    if (i != 0) {
-                        GlobalResources.getPicDetailList().addAll(list);
-                        GlobalResources.setIndexToStart(i);
-                    } else {
-                        GlobalResources.setDoneLoadingLocally(true);
-                    }
-                }
-                if (!GlobalResources.isDoneLoadingLocally()) {
-                    GlobalResources.setDoneLoadingLocally(true);
-                    return list;
-                } else {
-                    start = GlobalResources.getIndexToStart();
-                }
+            int size = Configuration.chunkSize;
+            Date date = Utils.getDateBeforeDays(new Date(), start);
+            List<PicDetailTable> l1 = GlobalResources.getInternalDBHelper().getByDate(date, size);
+            logger.info("Total fetched : " + l1.size());
+            List<PicDetailTable> l2 = getMaxContinuous(l1, date);
+            logger.info("Max Continuous : " + l2.size());
+            if (l2.size() == size) {
+                GlobalResources.getPicDetailList().addAll(l2);
+                return l2;
             }
 
             if (GlobalResources.isNetworkConnected(applicationContext)) {
+                list.addAll(l2);
+                start += l2.size();
+                size -= l2.size();
+
                 MongoDBManager mongoDbManager = GlobalResources.getMongoDbManager();
                 if (mongoDbManager == null) {
                     mongoDbManager = new MongoDBManager();
                     mongoDbManager.init();
                     GlobalResources.setMongoDbManager(mongoDbManager);
                 }
-                list = mongoDbManager.getAllImages(start, Configuration.chunkSize);
-                if (list != null)
-                    logger.info("Total Images fetched from Server : " + list.size());
-
+                List<PicDetailTable> l3 = mongoDbManager.getAllImages(start, size);
+                if (l3 != null)
+                    logger.info("Total Images fetched from Server : " + l3.size());
+                list.addAll(l3);
             } else {
-                list = GlobalResources.getInternalDBHelper().getAll(currentPage * Configuration.chunkSize, Configuration.chunkSize);
+                list.addAll(l1);
+//                list = GlobalResources.getInternalDBHelper().getAll(start, size);
             }
             GlobalResources.getPicDetailList().addAll(list);
             return list;
@@ -142,5 +131,22 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                 }
             });
         }
+    }
+
+    public static List<PicDetailTable> getMaxContinuous(List<PicDetailTable> list, Date date) {
+        List<PicDetailTable> filterList = new ArrayList<>();
+        try {
+            for (PicDetailTable p : list) {
+                if (p.getDate() != null && df.format(p.getDate()).equals(df.format(date))) {
+                    filterList.add(p);
+                    date = Utils.getDateBeforeDays(date, 1);
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.ALL, "Exception : " + e.getMessage());
+        }
+        return filterList;
     }
 }

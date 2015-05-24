@@ -59,10 +59,55 @@ public class MongoDBManager {
         }
     }
 
+    public List<PicDetailTable> getLatestImages(Date date) {
+        List<PicDetailTable> list = new ArrayList<>();
+        boolean queryFailed = true;
+        int retryCount = 3;
+        while (queryFailed && retryCount > 0) {
+            try {
+                Log.i("Info", "Get Images meta data from table after date : " + date);
+                DBCollection collection = database.getCollection(Configuration.main_table);
+                DBObject condition = new BasicDBObject();
+                condition.put("$gt", date);
+                condition.put("$lte", new Date());
+                DBObject sortByDate = new BasicDBObject();
+                sortByDate.put("date", -1);
+                DBCursor dbObjects = collection.find(new BasicDBObject("date", condition)).sort(sortByDate);
+
+                while (dbObjects.hasNext()) {
+                    PicDetailTable pdt = new PicDetailTable();
+                    DBObject dbObject = dbObjects.next();
+                    Object subject = dbObject.get("subject");
+                    if (subject != null)
+                        pdt.setSubject(subject.toString());
+                    Object description = dbObject.get("description");
+                    if (description != null)
+                        pdt.setDescription(description.toString());
+                    Object link = dbObject.get("link");
+                    if (link != null)
+                        pdt.setLink(link.toString());
+                    Object d = dbObject.get("date");
+                    if (d != null)
+                        pdt.setDate((Date) d);
+                    Object photographer = dbObject.get("photographer");
+                    if (photographer != null)
+                        pdt.setPhotographer(photographer.toString());
+                    list.add(pdt);
+                }
+                queryFailed = false;
+            } catch(Exception e){
+                logger.log(Level.ALL, "Exception : Failed to add entry\n" + e.getMessage(), e);
+                Log.i("Info", "Trying again...");
+                retryCount--;
+            }
+        }
+        return list;
+    }
+
     public List<PicDetailTable> getAllImages(int offset, int size) {
         List<PicDetailTable> list = new ArrayList<>();
         boolean queryFailed = true;
-        int retryCount = 5;
+        int retryCount = 3;
         while (queryFailed && retryCount > 0) {
             try {
                 Log.i("Info", "Get Images meta data from table, offset " + offset + ", Size " + size);

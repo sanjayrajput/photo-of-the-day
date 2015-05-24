@@ -133,6 +133,8 @@ public class FullScreen extends Activity {
     public String saveImageInSDCard(boolean displayAlreadyExistToast, boolean displaySavingToast) {
         logger.info("Saving file in SD Card");
         PicDetailTable picDetailTable = getCurrentPic();
+        if (picDetailTable == null)
+            return null;
         Bitmap bitmap = picDetailTable.getBitmap();
         String fileName = picDetailTable.getName();
         String filePath = null;
@@ -143,7 +145,7 @@ public class FullScreen extends Activity {
         }
         if (bitmap != null) {
             File sdCardDirectory = Environment.getExternalStorageDirectory();
-            filePath = sdCardDirectory.getAbsolutePath() + "/Download";
+            filePath = sdCardDirectory.getAbsolutePath() + "/PhotoOfTheDay";
             boolean created = new File(filePath).mkdirs();
             filePath += "/" + fileName;
             logger.info("Path : " + filePath);
@@ -179,7 +181,16 @@ public class FullScreen extends Activity {
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
         try {
-            myWallpaperManager.setBitmap(getCurrentPic().getBitmap());
+            PicDetailTable currentPic = getCurrentPic();
+            if (currentPic != null && currentPic.getBitmap() != null) {
+                myWallpaperManager.setBitmap(getCurrentPic().getBitmap());
+                Toast.makeText(getApplicationContext(), "Wallpaper Set Successfully!!!",
+                        Toast.LENGTH_LONG).show();
+            }
+            else
+                Toast.makeText(getApplicationContext(), "Failed to set wallpaper - image not found",
+                    Toast.LENGTH_LONG).show();
+
         } catch (IOException e) {
             Toast.makeText(getApplicationContext(), "Failed to set wallpaper",
                     Toast.LENGTH_LONG).show();
@@ -189,6 +200,11 @@ public class FullScreen extends Activity {
 
     public void openImageInGallery() {
         String filePath = saveImageInSDCard(false, true);
+        if (filePath == null) {
+            Toast.makeText(getApplicationContext(), "Failed to open Image in Gallery - null file path",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         Uri fileUri = Uri.parse("file://" + filePath);
@@ -198,6 +214,11 @@ public class FullScreen extends Activity {
 
     public void shareImage() {
         String filePath = saveImageInSDCard(false, false);
+        if (filePath == null) {
+            Toast.makeText(getApplicationContext(), "Failed to share image - couldn't locate image in SDCard",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         Uri fileUri = Uri.parse("file://" + filePath);
@@ -208,6 +229,8 @@ public class FullScreen extends Activity {
 
     public PicDetailTable getCurrentPic() {
         List<PicDetailTable> picDetailList = GlobalResources.getPicDetailList();
-        return picDetailList.get(position);
+        if (position < picDetailList.size())
+            return picDetailList.get(position);
+        return null;
     }
 }

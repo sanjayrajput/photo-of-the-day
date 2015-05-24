@@ -9,10 +9,10 @@ import android.widget.ListView;
  */
 public class EndlessScrollListener implements AbsListView.OnScrollListener {
 
-    private int visibleThreshold = 1;
-    private int currentPage = 0;
-    private int previousTotal = 0;
-    private boolean loading = true;
+    public int visibleThreshold = 1;
+    public int currentPage = 0;
+    public int previousTotal = 0;
+    public boolean loading = true;
     private Context applicationContext;
     private ListView listView;
     private Context activityContext;
@@ -40,7 +40,7 @@ public class EndlessScrollListener implements AbsListView.OnScrollListener {
             // I load the next page of gigs using a background task,
             // but you can call any function here.
             currentPage++;
-            new InitApplication(listView, applicationContext, activityContext).execute(currentPage);
+            new InitApplication(listView, applicationContext, activityContext).execute(currentPage, false);
             loading = true;
         }
     }

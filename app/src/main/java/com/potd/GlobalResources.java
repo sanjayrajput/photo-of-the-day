@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.LruCache;
 
+import com.potd.core.AWSDBManager;
+import com.potd.core.EndlessScrollListener;
 import com.potd.core.InternalDBHelper;
 import com.potd.core.MongoDBManager;
 import com.potd.models.PicDetailTable;
@@ -28,6 +30,8 @@ public class GlobalResources {
     private static InternalDBHelper internalDBHelper;
     private static boolean doneLoadingLocally;
     private static int indexToStart = 0;
+    private static AWSDBManager awsdbManager;
+    private static EndlessScrollListener endlessScrollListener;
 
     public static MongoDBManager getMongoDbManager() {
         return mongoDbManager;
@@ -105,5 +109,21 @@ public class GlobalResources {
 
     public static void setIndexToStart(int indexToStart) {
         GlobalResources.indexToStart = indexToStart;
+    }
+
+    public static AWSDBManager getAwsdbManager() {
+        return awsdbManager;
+    }
+
+    public static void setAwsdbManager(AWSDBManager awsdbManager) {
+        GlobalResources.awsdbManager = awsdbManager;
+    }
+
+    public static EndlessScrollListener getEndlessScrollListener() {
+        return endlessScrollListener;
+    }
+
+    public static void setEndlessScrollListener(EndlessScrollListener endlessScrollListener) {
+        GlobalResources.endlessScrollListener = endlessScrollListener;
     }
 }

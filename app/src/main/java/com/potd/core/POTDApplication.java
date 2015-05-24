@@ -33,18 +33,6 @@ public class POTDApplication extends Application {
             GlobalResources.setDownloadingImages(new HashSet<String>());
             GlobalResources.setInternalDBHelper(new InternalDBHelper(getApplicationContext()));
             GlobalResources.setDoneLoadingLocally(false);
-
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-
-                    }catch (Exception e) {
-                        logger.log(Level.ALL, "Exception : " + e.getMessage());
-                    }
-                }
-            });
-            thread.start();
         } catch (Exception e) {
             logger.log(Level.ALL, "Exception : " + e.getMessage());
         }

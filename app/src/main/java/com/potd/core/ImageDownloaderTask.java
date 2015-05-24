@@ -40,8 +40,10 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
             return null;
         }
         Bitmap bitmap = ImageDBHelper.getFromInternalStorage(imageUrl);
-        if (bitmap != null)
+        if (bitmap != null) {
+            picDetailTable.setBitmap(bitmap);
             return bitmap;
+        }
 
         GlobalResources.getDownloadingImages().add(imageUrl);
         Bitmap imageBitmap = null;
@@ -54,6 +56,15 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
                 imageBitmap = BitmapFactory.decodeStream(in);
                 picDetailTable.setBitmap(imageBitmap);
 
+               /* //---- Code to download image from Amazon DB -----
+                AWSDBManager awsdbManager = GlobalResources.getAwsdbManager();
+                if (awsdbManager == null) {
+                    awsdbManager = new AWSDBManager();
+                    GlobalResources.setAwsdbManager(awsdbManager);
+                }
+                imageBitmap = awsdbManager.getImage(imageUrl);
+                */
+
                 //------- Cache ----------
                 LruCache<String, Bitmap> images = GlobalResources.getImageCache();
                 Log.i("ImageDownloaderTask", "Image Size : " + imageBitmap.getRowBytes() / 1000.0 + " KB");
@@ -62,6 +73,7 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
                 //------- Internal Storage ----------
                 InternalDBHelper internalDBHelper = GlobalResources.getInternalDBHelper();
+                Log.i("ImageDownloaderTask", "Putting image in internal database - " + imageUrl);
                 if (picDetailTable != null)
                     internalDBHelper.insert(picDetailTable);
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:gesture-image="http://schemas.polites.com/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
@@ -9,12 +10,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ImageView
+        <!--ImageView
             android:id="@+id/imgDisplay"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:adjustViewBounds="true"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"/-->
+
+        <com.potd.gesture.view.main.src.com.polites.android.GestureImageView
+            android:id="@+id/imgDisplay"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:adjustViewBounds="true"
+            gesture-image:min-scale="0.1"
+            gesture-image:max-scale="10.0"
+            gesture-image:strict="false"/>
 
         <ImageView
             android:id="@+id/pageLoading"

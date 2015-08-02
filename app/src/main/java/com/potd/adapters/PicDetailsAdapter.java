@@ -104,7 +104,7 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
                 picDetailTable.setBitmap(bitmap);
 
                 ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
-                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 image.setLayoutParams(layoutParams);
                 image.requestLayout();
 

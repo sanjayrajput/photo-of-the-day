@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.potd.core.ImageDownloaderTask;
+import com.potd.gesture.view.main.src.com.polites.android.GestureImageView;
 import com.potd.models.PicDetailTable;
 
 import java.io.File;
@@ -52,16 +53,29 @@ public class FullScreen extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.save_image) {
-            saveImageInSDCard(true, true);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    saveImageInSDCard(true, true);
+                }
+            });
             return true;
         } else if (id == R.id.action_set_as_wallpaper) {
-            setImageAsWallpaper();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setImageAsWallpaper();
+                }
+            });
             return true;
         } else if (id == R.id.view_in_gallery) {
             openImageInGallery();
             return true;
         } else if (id == R.id.image_share) {
             shareImage();
+            return true;
+        } else if (id == R.id.action_rate_app) {
+            rateTheApp();
             return true;
         }
 
@@ -79,7 +93,7 @@ public class FullScreen extends Activity {
         position = intent.getIntExtra("position", 0);
 
 
-        final ImageView fullscreenImage = (ImageView) findViewById(R.id.imgDisplay);
+        final GestureImageView fullscreenImage = (GestureImageView) findViewById(R.id.imgDisplay);
         final ImageView loadingImage = (ImageView) findViewById(R.id.pageLoading);
 
         loadingImage.setBackgroundResource(R.drawable.loading_animation);
@@ -115,6 +129,8 @@ public class FullScreen extends Activity {
                 fullscreenImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
             }
         });
+
+        fullscreenImage.setLongClickable(true);
 
         fullscreenImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -232,5 +248,14 @@ public class FullScreen extends Activity {
         if (position < picDetailList.size())
             return picDetailList.get(position);
         return null;
+    }
+
+    public void rateTheApp() {
+        final String appPackageName = getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
     }
 }

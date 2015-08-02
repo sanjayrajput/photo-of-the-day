@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -111,38 +112,9 @@ public class Home extends Activity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             checkForUpdate(true);
-            /*List<PicDetailTable> currentList = GlobalResources.getPicDetailList();
-            if (currentList != null && !currentList.isEmpty()) {
-                try {
-                    Date date = currentList.get(0).getDate();
-                    Date topPicDate = df.parse(df.format(date));
-                    Date today = df.parse(df.format(new Date()));
-                    if (topPicDate.equals(today)) {
-                        Toast.makeText(this, "Content is up to date",
-                                Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                } catch (ParseException e) {
-                    logger.info("Failed to compare dates...");
-                }
-            }
-
-            if (!GlobalResources.isNetworkConnected(getApplicationContext())) {
-                Toast.makeText(this, "Failed to update. No Internet Connection.",
-                        Toast.LENGTH_LONG).show();
-                return true;
-            }
-            Toast.makeText(this, "Fetching latest photographs...",
-                    Toast.LENGTH_LONG).show();
-
-            EndlessScrollListener endlessScrollListener = GlobalResources.getEndlessScrollListener();
-            endlessScrollListener.visibleThreshold = 1;
-            endlessScrollListener.currentPage = 0;
-            endlessScrollListener.loading = true;
-            endlessScrollListener.previousTotal = 0;
-
-            final ListView picList = (ListView) findViewById(R.id.picsList);
-            new InitApplication(picList, getApplicationContext(), appContext).execute(0, true);*/
+            return true;
+        } else if (id == R.id.action_rate_app) {
+            rateTheApp();
             return true;
         }
 
@@ -190,7 +162,7 @@ public class Home extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new UpdateLatestTask(picList).execute();
+                                new UpdateLatestTask(picList, getApplicationContext()).execute();
                             }
                         });
                     } else {
@@ -206,6 +178,15 @@ public class Home extends Activity {
             } catch (Exception e) {
                 logger.info("Failed to compare Dates...");
             }
+        }
+    }
+
+    public void rateTheApp() {
+        final String appPackageName = getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
 

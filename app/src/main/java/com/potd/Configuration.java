@@ -8,6 +8,9 @@ public class Configuration {
     public static final String db_user = "sanjay.rajput";
     public static final String db_pass = "sanjay";
     public static final String main_table = "photo_of_the_day";
+    public static final String mysql_database = "android_db";
+    public static final String mysql_db_user = "sanjayrajput";
+    public static final String mysql_db_pass = "sanjaysu91";
     public static final int cacheSize = 1000;
     public static final int chunkSize = 10;
     public static final int maxPhotoCount = 100;

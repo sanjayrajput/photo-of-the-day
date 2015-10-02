@@ -1,10 +1,8 @@
 package com.potd;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,17 +13,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.potd.adapters.PicDetailsAdapter;
 import com.potd.core.EndlessScrollListener;
 import com.potd.core.InitApplication;
-import com.potd.core.MongoDBManager;
 import com.potd.core.UpdateLatestTask;
 import com.potd.models.PicDetailTable;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;

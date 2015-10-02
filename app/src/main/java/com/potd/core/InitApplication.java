@@ -15,7 +15,6 @@ import com.potd.models.PicDetailTable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -89,13 +88,12 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                 start += l2.size();
                 size -= l2.size();
 
-                MongoDBManager mongoDbManager = GlobalResources.getMongoDbManager();
-                if (mongoDbManager == null) {
-                    mongoDbManager = new MongoDBManager();
-                    mongoDbManager.init();
-                    GlobalResources.setMongoDbManager(mongoDbManager);
+                DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
+                if (dataBaseManager == null) {
+                    dataBaseManager = new DataBaseManager();
+                    GlobalResources.setDataBaseManager(dataBaseManager);
                 }
-                List<PicDetailTable> l3 = mongoDbManager.getAllImages(start, size);
+                List<PicDetailTable> l3 = dataBaseManager.getAllImages(start, size);
                 if (l3 != null)
                     logger.info("Total Images fetched from Server : " + l3.size());
                 list.addAll(l3);

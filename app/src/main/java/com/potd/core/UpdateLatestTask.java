@@ -51,13 +51,12 @@ public class UpdateLatestTask extends AsyncTask<Object, Void, List<PicDetailTabl
         PicDetailTable topItem = currentList.get(0);
         List<PicDetailTable> latestImages = new ArrayList<>();
         try {
-            MongoDBManager mongoDbManager = GlobalResources.getMongoDbManager();
-            if (mongoDbManager == null) {
-                mongoDbManager = new MongoDBManager();
-                mongoDbManager.init();
-                GlobalResources.setMongoDbManager(mongoDbManager);
+            DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
+            if (dataBaseManager == null) {
+                dataBaseManager = new DataBaseManager();
+                GlobalResources.setDataBaseManager(dataBaseManager);
             }
-            latestImages = mongoDbManager.getLatestImages(topItem.getDate());
+            latestImages = dataBaseManager.getLatestImages(topItem.getDate());
             logger.info("Latest Images : " + latestImages.size());
 
         } catch (ApiException e) {

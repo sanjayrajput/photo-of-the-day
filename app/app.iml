@@ -88,12 +88,12 @@
     <orderEntry type="library" exported="" name="appcompat-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.1.1" level="project" />
-    <orderEntry type="library" exported="" name="mongo-java-driver-2.10.1" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="mysql-connector-java-5.1.30" level="project" />
+    <orderEntry type="library" exported="" name="mongo-java-driver-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.1.1" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.1.1" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.3" level="project" />
   </component>
 </module>
 

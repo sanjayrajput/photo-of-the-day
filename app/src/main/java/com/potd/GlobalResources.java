@@ -8,9 +8,9 @@ import android.net.NetworkInfo;
 import android.util.LruCache;
 
 import com.potd.core.AWSDBManager;
+import com.potd.core.DataBaseManager;
 import com.potd.core.EndlessScrollListener;
 import com.potd.core.InternalDBHelper;
-import com.potd.core.MongoDBManager;
 import com.potd.models.PicDetailTable;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public class GlobalResources {
 
-    private static MongoDBManager mongoDbManager;
+    private static DataBaseManager dataBaseManager;
     private static List<PicDetailTable> picDetailList;
     private static LruCache<String, Bitmap> imageCache;
     private static Set<String> downloadingImages;
@@ -33,12 +33,12 @@ public class GlobalResources {
     private static AWSDBManager awsdbManager;
     private static EndlessScrollListener endlessScrollListener;
 
-    public static MongoDBManager getMongoDbManager() {
-        return mongoDbManager;
+    public static DataBaseManager getDataBaseManager() {
+        return dataBaseManager;
     }
 
-    public static void setMongoDbManager(MongoDBManager mongoDbManager) {
-        GlobalResources.mongoDbManager = mongoDbManager;
+    public static void setDataBaseManager(DataBaseManager dataBaseManager) {
+        GlobalResources.dataBaseManager = dataBaseManager;
     }
 
     public static List<PicDetailTable> getPicDetailList() {

@@ -23,4 +23,9 @@
         android:title="@string/action_view_in_gallery"
         android:orderInCategory="4"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_rate_app"
+        android:title="@string/action_rate"
+        android:orderInCategory="5"
+        app:showAsAction="never" />
 </menu>

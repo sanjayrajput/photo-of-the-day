@@ -1,7 +1,9 @@
 package com.potd.core;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.potd.ApiException;
 import com.potd.GlobalResources;
@@ -20,9 +22,11 @@ public class UpdateLatestTask extends AsyncTask<Object, Void, List<PicDetailTabl
 
     private static final Logger logger = Logger.getLogger("UpdateLatestTask");
     private ListView listView;
+    private Context context;
 
-    public UpdateLatestTask(ListView listView) {
+    public UpdateLatestTask(ListView listView, Context appContext) {
         this.listView = listView;
+        this.context = appContext;
     }
 
     @Override
@@ -42,6 +46,8 @@ public class UpdateLatestTask extends AsyncTask<Object, Void, List<PicDetailTabl
                     listView.smoothScrollToPosition(0);
                 }
             });
+        } else {
+            Toast.makeText(context, "Content already up to date.", Toast.LENGTH_LONG).show();
         }
     }
 

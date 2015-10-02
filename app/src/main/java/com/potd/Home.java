@@ -3,7 +3,9 @@ package com.potd;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -184,7 +186,7 @@ public class Home extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new UpdateLatestTask(picList).execute();
+                                new UpdateLatestTask(picList, getApplicationContext()).execute();
                             }
                         });
                     } else {
@@ -200,6 +202,15 @@ public class Home extends Activity {
             } catch (Exception e) {
                 logger.info("Failed to compare Dates...");
             }
+        }
+    }
+
+    public void rateTheApp() {
+        final String appPackageName = getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
 

@@ -12,8 +12,8 @@
        <ImageView
            android:id="@+id/picofday"
            android:adjustViewBounds="true"
-           android:scaleType="fitXY"
-           android:layout_height="270dp"
+           android:scaleType="centerCrop"
+           android:layout_height="340dp"
            android:layout_width="fill_parent"
            />
         <ImageView

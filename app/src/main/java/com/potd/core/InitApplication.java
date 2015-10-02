@@ -68,7 +68,8 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
             List<PicDetailTable> list = new ArrayList<>();
             int currentPage = (int) params[0];
             isRefresh = (boolean) params[1];
-            if ((Configuration.maxPhotoCount < ((currentPage + 1) * Configuration.chunkSize)) || isCurrentPageExistInCache(currentPage))
+//            if ((Configuration.maxPhotoCount < ((currentPage + 1) * Configuration.chunkSize)) || isCurrentPageExistInCache(currentPage))
+            if (isCurrentPageExistInCache(currentPage))
                 return null;
 
             int start = currentPage * Configuration.chunkSize;

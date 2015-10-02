@@ -96,7 +96,7 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
             if (activity.equalsIgnoreCase("Home")) {
                 ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 imageView.setLayoutParams(layoutParams);
                 imageView.requestLayout();
             }

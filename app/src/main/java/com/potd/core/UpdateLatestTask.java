@@ -33,6 +33,7 @@ public class UpdateLatestTask extends AsyncTask<Object, Void, List<PicDetailTabl
     protected void onPostExecute(List<PicDetailTable> list) {
         List<PicDetailTable> currentList = GlobalResources.getPicDetailList();
         PicDetailsAdapter adapter = (PicDetailsAdapter) listView.getAdapter();
+
         if (list.size() > 0) {
             Collections.reverse(list);
             for (PicDetailTable pdt : list) {
@@ -70,7 +71,6 @@ public class UpdateLatestTask extends AsyncTask<Object, Void, List<PicDetailTabl
             }
             latestImages = sheetAdapter.getLatestImages(topItem.getDate());
             logger.info("Latest Images : " + latestImages.size());
-
         } catch (ApiException e) {
             logger.info("Failed to connect to Mongo database " + e.getMessage());
         } catch (Exception e) {

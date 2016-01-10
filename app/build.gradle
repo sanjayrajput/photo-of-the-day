@@ -12,6 +12,7 @@ android {
         versionName "1.5"
         multiDexEnabled true
     }
+
     buildTypes {
 
         debug {

@@ -12,6 +12,7 @@ import com.potd.Utils;
 import com.potd.adapters.PicDetailsAdapter;
 import com.potd.models.PicDetailTable;
 
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,13 +32,14 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
     private Context applicationContext;
     private Context activityContext;
     private boolean isRefresh;
+    private InputStream p12File;
     public static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
     public InitApplication(ListView listView, Context applicationContext, Context context) {
         this.listView = listView;
         this.applicationContext = applicationContext;
         this.activityContext = context;
-        isRefresh = false;
+        this.isRefresh = false;
     }
 
     @Override
@@ -89,12 +91,20 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                 start += l2.size();
                 size -= l2.size();
 
-                DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
-                if (dataBaseManager == null) {
-                    dataBaseManager = new DataBaseManager();
-                    GlobalResources.setDataBaseManager(dataBaseManager);
+//                DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
+//                if (dataBaseManager == null) {
+//                    dataBaseManager = new DataBaseManager();
+//                    GlobalResources.setDataBaseManager(dataBaseManager);
+//                }
+//                List<PicDetailTable> l3 = dataBaseManager.getAllImages(start, size);
+
+                GoogleSpreadSheetAdapter sheetAdapter = GlobalResources.getGoogleSpreadSheetAdapter();
+                if (sheetAdapter == null) {
+                    sheetAdapter = new GoogleSpreadSheetAdapter(GlobalResources.getP12AuthKeyFile());
+                    GlobalResources.setGoogleSpreadSheetAdapter(sheetAdapter);
                 }
-                List<PicDetailTable> l3 = dataBaseManager.getAllImages(start, size);
+                List<PicDetailTable> l3 = sheetAdapter.get(start, size);
+
                 if (l3 != null)
                     logger.info("Total Images fetched from Server : " + l3.size());
                 list.addAll(l3);

@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -16,14 +17,20 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.potd.core.EndlessScrollListener;
+import com.potd.core.GoogleSpreadSheetAdapter;
 import com.potd.core.InitApplication;
 import com.potd.core.UpdateLatestTask;
 import com.potd.models.PicDetailTable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -42,7 +49,7 @@ public class Home extends Activity {
 
         final float scale = this.getResources().getDisplayMetrics().density;
         GlobalResources.setScale(scale);
-
+        saveP12KeyFile();
         if (!GlobalResources.isNetworkConnected(appContext)) {
             Toast.makeText(this, "No Internet Connection",
                     Toast.LENGTH_LONG).show();
@@ -214,4 +221,29 @@ public class Home extends Activity {
         }
     }
 
+    public void saveP12KeyFile() {
+        try {
+            String filePath = "";
+            File sdCardDirectory = Environment.getExternalStorageDirectory();
+            filePath = sdCardDirectory.getAbsolutePath() + "/PhotoOfTheDay";
+            boolean created = new File(filePath).mkdirs();
+            filePath += "/" + GoogleSpreadSheetAdapter.P12FILE;
+            logger.info("Path : " + filePath);
+            File keyFile = new File(filePath);
+            if (!keyFile.exists()) {
+                InputStream inputStream = getAssets().open(GoogleSpreadSheetAdapter.P12FILE);
+                FileOutputStream outputStream = new FileOutputStream(keyFile);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = inputStream.read(buf)) > 0) {
+                    outputStream.write(buf, 0, len);
+                }
+                inputStream.close();
+                outputStream.close();
+            }
+            GlobalResources.setP12AuthKeyFilePath(filePath);
+        } catch (IOException e) {
+            logger.log(Level.ALL, "Failed to save " + e.getMessage(), e);
+        }
+    }
 }

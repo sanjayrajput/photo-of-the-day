@@ -10,17 +10,31 @@ android {
         targetSdkVersion 21
         versionCode 7
         versionName "1.5"
+        multiDexEnabled true
     }
     buildTypes {
 
         debug {
-            debuggable false
+            debuggable true
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/license.txt'
+    }
+
+    dexOptions {
+        preDexLibraries false
     }
 }
 
@@ -32,5 +46,10 @@ dependencies {
     compile 'org.mongodb:mongo-java-driver:3.0.0'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.squareup.picasso:picasso:2.1.1'
-    compile 'mysql:mysql-connector-java:5.1.30'
+//    compile 'mysql:mysql-connector-java:5.1.30'
+    compile 'com.google.api-client:google-api-client:1.21.0'
+    compile ('com.google.gdata:core:1.47.1') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+//    compile 'org.apache.httpcomponents:httpclient-android:4.3.3'
 }

@@ -33,6 +33,7 @@ public class POTDApplication extends Application {
             GlobalResources.setDownloadingImages(new HashSet<String>());
             GlobalResources.setInternalDBHelper(new InternalDBHelper(getApplicationContext()));
             GlobalResources.setDoneLoadingLocally(false);
+            GlobalResources.setP12AuthKeyFile(getAssets().open(GoogleSpreadSheetAdapter.P12FILE));
         } catch (Exception e) {
             logger.log(Level.ALL, "Exception : " + e.getMessage());
         }

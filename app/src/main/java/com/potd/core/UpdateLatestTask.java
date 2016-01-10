@@ -57,12 +57,18 @@ public class UpdateLatestTask extends AsyncTask<Object, Void, List<PicDetailTabl
         PicDetailTable topItem = currentList.get(0);
         List<PicDetailTable> latestImages = new ArrayList<>();
         try {
-            DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
-            if (dataBaseManager == null) {
-                dataBaseManager = new DataBaseManager();
-                GlobalResources.setDataBaseManager(dataBaseManager);
+//            DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
+//            if (dataBaseManager == null) {
+//                dataBaseManager = new DataBaseManager();
+//                GlobalResources.setDataBaseManager(dataBaseManager);
+//            }
+
+            GoogleSpreadSheetAdapter sheetAdapter = GlobalResources.getGoogleSpreadSheetAdapter();
+            if (sheetAdapter == null) {
+                sheetAdapter = new GoogleSpreadSheetAdapter(GlobalResources.getP12AuthKeyFile());
+                GlobalResources.setGoogleSpreadSheetAdapter(sheetAdapter);
             }
-            latestImages = dataBaseManager.getLatestImages(topItem.getDate());
+            latestImages = sheetAdapter.getLatestImages(topItem.getDate());
             logger.info("Latest Images : " + latestImages.size());
 
         } catch (ApiException e) {

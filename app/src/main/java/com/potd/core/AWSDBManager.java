@@ -3,10 +3,6 @@ package com.potd.core;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.mysql.jdbc.MySQLConnection;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.logging.Logger;
 

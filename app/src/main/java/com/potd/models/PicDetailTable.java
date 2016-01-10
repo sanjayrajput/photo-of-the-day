@@ -25,7 +25,7 @@ public class PicDetailTable {
         this.link = link;
         this.name = getName(link);
         this.bitmap = bitmap;
-        this.photographer = photographer;
+        setPhotographer(photographer);
     }
 
     public PicDetailTable() {
@@ -36,7 +36,15 @@ public class PicDetailTable {
     }
 
     public void setPhotographer(String photographer) {
-        this.photographer = photographer;
+        if (photographer != null) {
+            this.photographer = photographer;
+            if (this.photographer.startsWith("Photograph by ")) {
+                this.photographer = this.photographer.substring(13);
+            }
+            if (this.photographer.endsWith(", National Geographic Your Shot")) {
+                this.photographer = this.photographer.replace(", National Geographic Your Shot", "");
+            }
+        }
     }
 
     public String get_id() {

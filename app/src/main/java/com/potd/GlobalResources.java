@@ -10,9 +10,11 @@ import android.util.LruCache;
 import com.potd.core.AWSDBManager;
 import com.potd.core.DataBaseManager;
 import com.potd.core.EndlessScrollListener;
+import com.potd.core.GoogleSpreadSheetAdapter;
 import com.potd.core.InternalDBHelper;
 import com.potd.models.PicDetailTable;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +34,9 @@ public class GlobalResources {
     private static int indexToStart = 0;
     private static AWSDBManager awsdbManager;
     private static EndlessScrollListener endlessScrollListener;
+    private static GoogleSpreadSheetAdapter googleSpreadSheetAdapter;
+    private static InputStream p12AuthKeyFile;
+    private static String p12AuthKeyFilePath;
 
     public static DataBaseManager getDataBaseManager() {
         return dataBaseManager;
@@ -125,5 +130,29 @@ public class GlobalResources {
 
     public static void setEndlessScrollListener(EndlessScrollListener endlessScrollListener) {
         GlobalResources.endlessScrollListener = endlessScrollListener;
+    }
+
+    public static GoogleSpreadSheetAdapter getGoogleSpreadSheetAdapter() {
+        return googleSpreadSheetAdapter;
+    }
+
+    public static void setGoogleSpreadSheetAdapter(GoogleSpreadSheetAdapter googleSpreadSheetAdapter) {
+        GlobalResources.googleSpreadSheetAdapter = googleSpreadSheetAdapter;
+    }
+
+    public static InputStream getP12AuthKeyFile() {
+        return p12AuthKeyFile;
+    }
+
+    public static void setP12AuthKeyFile(InputStream p12AuthKeyFile) {
+        GlobalResources.p12AuthKeyFile = p12AuthKeyFile;
+    }
+
+    public static void setP12AuthKeyFilePath(String p12AuthKeyFilePath) {
+        GlobalResources.p12AuthKeyFilePath = p12AuthKeyFilePath;
+    }
+
+    public static String getP12AuthKeyFilePath() {
+        return p12AuthKeyFilePath;
     }
 }

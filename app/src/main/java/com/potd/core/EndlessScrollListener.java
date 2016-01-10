@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import java.io.InputStream;
+
 /**
  * Created by sanjay.rajput on 01/05/15.
  */

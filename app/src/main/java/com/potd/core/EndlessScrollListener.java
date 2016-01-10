@@ -11,7 +11,7 @@ import java.io.InputStream;
  */
 public class EndlessScrollListener implements AbsListView.OnScrollListener {
 
-    public int visibleThreshold = 1;
+    public int visibleThreshold = 2;
     public int currentPage = 0;
     public int previousTotal = 0;
     public boolean loading = true;

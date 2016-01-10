@@ -17,6 +17,7 @@ import com.potd.models.PicDetailTable;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by sanjay.rajput on 27/04/15.
@@ -37,6 +38,7 @@ public class GlobalResources {
     private static GoogleSpreadSheetAdapter googleSpreadSheetAdapter;
     private static InputStream p12AuthKeyFile;
     private static String p12AuthKeyFilePath;
+    private static ExecutorService executorService;
 
     public static DataBaseManager getDataBaseManager() {
         return dataBaseManager;
@@ -154,5 +156,13 @@ public class GlobalResources {
 
     public static String getP12AuthKeyFilePath() {
         return p12AuthKeyFilePath;
+    }
+
+    public static ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public static void setExecutorService(ExecutorService executorService) {
+        GlobalResources.executorService = executorService;
     }
 }

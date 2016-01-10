@@ -117,10 +117,23 @@ public class GoogleSpreadSheetAdapter {
     }
 
     public List<PicDetailTable> get(int start, int size) throws ApiException {
+        logger.log(Level.INFO, "Fetching images from google sheet offset: " + start + ", size: " + size);
         List<PicDetailTable> list = new ArrayList<>();
         try {
-            this.spreadsheet = this.service.getFeed(worksheetUrl, SpreadsheetFeed.class);
-            List<SpreadsheetEntry> sheetList = this.spreadsheet.getEntries();
+            List<SpreadsheetEntry> sheetList = null;
+            try {
+                if (this.spreadsheet == null) {
+                    logger.info("fetching spreadsheet");
+                    this.spreadsheet = this.service.getFeed(worksheetUrl, SpreadsheetFeed.class);
+                }
+                logger.info("fetching spreadsheet entries");
+                sheetList = this.spreadsheet.getEntries();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Failed to get entries");
+                logger.info("fetching spreadsheet");
+                this.spreadsheet = this.service.getFeed(worksheetUrl, SpreadsheetFeed.class);
+                sheetList = this.spreadsheet.getEntries();
+            }
             if (sheetList != null && !sheetList.isEmpty()) {
                 SpreadsheetEntry potdSheet = sheetList.get(0);
                 List<WorksheetEntry> worksheets = potdSheet.getWorksheets();
@@ -143,6 +156,7 @@ public class GoogleSpreadSheetAdapter {
     }
 
     public List<PicDetailTable> getLatestImages(Date date) throws ApiException {
+        logger.log(Level.INFO, "Fetching latest images after date: " + date);
         List<PicDetailTable> list = new ArrayList<>();
         SimpleDateFormat smf = new SimpleDateFormat("MM/dd/yyyy");
         try {

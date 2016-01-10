@@ -109,13 +109,13 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
                 image.requestLayout();
 
             } else {
-                Thread thread = new Thread(new Runnable() {
+                Runnable task = new Runnable() {
                     @Override
                     public void run() {
                         new ImageDownloaderTask(image, loadingImage, "Home", picDetailTable).execute();
                     }
-                });
-                thread.start();
+                };
+                GlobalResources.getExecutorService().submit(task);
 //                Picasso.with(context).load(picDetailTable.getLink()).into(image); TODO : Explore Picasso
             }
 

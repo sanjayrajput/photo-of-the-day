@@ -13,6 +13,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +37,7 @@ public class POTDApplication extends Application {
             GlobalResources.setInternalDBHelper(new InternalDBHelper(getApplicationContext()));
             GlobalResources.setDoneLoadingLocally(false);
             GlobalResources.setP12AuthKeyFile(getAssets().open(GoogleSpreadSheetAdapter.P12FILE));
+            GlobalResources.setExecutorService(new ThreadPoolExecutor(2, 5, 1000L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(1, true), new ThreadPoolExecutor.DiscardPolicy()));
         } catch (Exception e) {
             logger.log(Level.ALL, "Exception : " + e.getMessage());
         }

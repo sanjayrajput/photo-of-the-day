@@ -11,5 +11,15 @@
         android:title="@string/action_rate"
         android:orderInCategory="2"
         app:showAsAction="never" />
+    <!--item
+        android:id="@+id/action_skip_to_date"
+        android:title="@string/skip_to_date"
+        android:orderInCategory="3"
+        app:showAsAction="never" /-->
+    <item
+        android:id="@+id/action_skip_to_top"
+        android:title="@string/skip_to_top"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
 
 </menu>

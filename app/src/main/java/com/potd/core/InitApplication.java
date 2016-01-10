@@ -91,13 +91,6 @@ public class InitApplication extends AsyncTask<Object, Void, List<PicDetailTable
                 start += l2.size();
                 size -= l2.size();
 
-//                DataBaseManager dataBaseManager = GlobalResources.getDataBaseManager();
-//                if (dataBaseManager == null) {
-//                    dataBaseManager = new DataBaseManager();
-//                    GlobalResources.setDataBaseManager(dataBaseManager);
-//                }
-//                List<PicDetailTable> l3 = dataBaseManager.getAllImages(start, size);
-
                 GoogleSpreadSheetAdapter sheetAdapter = GlobalResources.getGoogleSpreadSheetAdapter();
                 if (sheetAdapter == null) {
                     sheetAdapter = new GoogleSpreadSheetAdapter(GlobalResources.getP12AuthKeyFile());

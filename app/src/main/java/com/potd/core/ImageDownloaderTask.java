@@ -36,7 +36,7 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         String imageUrl = picDetailTable.getLink();
 
         if (GlobalResources.getDownloadingImages().contains(imageUrl) && activity != null && !activity.equalsIgnoreCase("FullScreen")) {
-            Log.i("ImageDownloaderTask", "Already downloading image for url : " + imageUrl);
+            Log.i("ImageDownloaderTask", "Already downloading Image : " + picDetailTable.getSubject());
             return null;
         }
         Bitmap bitmap = ImageDBHelper.getFromInternalStorage(imageUrl);
@@ -51,7 +51,8 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         int retryCount = 2;
         while (!imageDownloaded && retryCount > 0) {
             try {
-                Log.i("ImageDownloaderTask", "Downloading image from url : " + imageUrl);
+                Log.i("ImageDownloaderTask", "Downloading Image : " + picDetailTable.getSubject());
+                Log.i("ImageDownloaderTask", "image url : " + imageUrl);
                 InputStream in = new java.net.URL(imageUrl).openStream();
                 imageBitmap = BitmapFactory.decodeStream(in);
                 picDetailTable.setBitmap(imageBitmap);
@@ -68,12 +69,12 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
                 //------- Cache ----------
                 LruCache<String, Bitmap> images = GlobalResources.getImageCache();
                 Log.i("ImageDownloaderTask", "Image Size : " + imageBitmap.getRowBytes() / 1000.0 + " KB");
-                Log.i("ImageDownloaderTask", "Putting image in cache for url - " + imageUrl);
+                Log.i("ImageDownloaderTask", "Putting image in cache: " + picDetailTable.getSubject());
                 images.put(imageUrl, imageBitmap);
 
                 //------- Internal Storage ----------
                 InternalDBHelper internalDBHelper = GlobalResources.getInternalDBHelper();
-                Log.i("ImageDownloaderTask", "Putting image in internal database - " + imageUrl);
+                Log.i("ImageDownloaderTask", "Putting image in internal database: " + picDetailTable.getSubject());
                 if (picDetailTable != null)
                     internalDBHelper.insert(picDetailTable);
 

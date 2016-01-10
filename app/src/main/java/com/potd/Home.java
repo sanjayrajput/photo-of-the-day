@@ -118,9 +118,25 @@ public class Home extends Activity {
         } else if (id == R.id.action_rate_app) {
             rateTheApp();
             return true;
+//        } else if (id == R.id.action_skip_to_date) {
+//            skipToDate();
+//            return true;
+        } else if (id == R.id.action_skip_to_top) {
+            skipToTop();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void skipToTop() {
+        final ListView picList = (ListView) findViewById(R.id.picsList);
+//        picList.smoothScrollToPosition(0);
+        picList.setSelectionAfterHeaderView();
+    }
+
+    private void skipToDate() {
+
     }
 
     @Override

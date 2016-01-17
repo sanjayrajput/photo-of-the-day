@@ -6,4 +6,8 @@
     <dimen name="text_right_margin">5dp</dimen>
     <dimen name="text_top_margin">2dp</dimen>
     <dimen name="text_bottom_margin">10dp</dimen>
+    <dimen name="settings_text_left_margin">15dp</dimen>
+    <dimen name="settings_text_right_margin">10dp</dimen>
+    <dimen name="settings_text_top_margin">10dp</dimen>
+    <dimen name="settings_first_text_top_margin">20dp</dimen>
 </resources>

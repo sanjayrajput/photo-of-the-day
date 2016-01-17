@@ -1,4 +1,4 @@
-package com.potd;
+package com.potd.layout;
 
 import android.app.Activity;
 import android.app.WallpaperManager;
@@ -17,6 +17,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.potd.GlobalResources;
+import com.potd.ImageDBHelper;
+import com.potd.R;
 import com.potd.core.ImageDownloaderTask;
 import com.potd.gesture.view.main.src.com.polites.android.GestureImageView;
 import com.potd.models.PicDetailTable;

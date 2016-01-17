@@ -7,7 +7,7 @@
     <string name="action_rate">Rate the App</string>
     <string name="skip_to_date">Skip To Date</string>
     <string name="skip_to_top">Skip To Top</string>
-    <string name="action_save">Save</string>
+    <string name="action_save">Save in SD Card</string>
     <string name="action_view_in_gallery">View in Gallery</string>
     <string name="action_image_share">Share</string>
     <string name="action_set_wallpaper">Set as Wallpaper</string>
@@ -15,5 +15,6 @@
     <string name="font_family">sans-serif-thin</string>
     <integer name="loading_duration">50</integer>
     <string name="title_activity_main1">Main1Activity</string>
+    <string name="settings">Settings</string>
 
 </resources>

@@ -1,6 +1,7 @@
-package com.potd;
+package com.potd.layout;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.potd.GlobalResources;
+import com.potd.R;
+import com.potd.core.AlarmReceiver;
 import com.potd.core.EndlessScrollListener;
 import com.potd.core.GoogleSpreadSheetAdapter;
 import com.potd.core.InitApplication;
@@ -76,6 +80,9 @@ public class Home extends Activity {
             GlobalResources.setEndlessScrollListener(endlessScrollListener);
             picList.setOnScrollListener(endlessScrollListener);
         }
+
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
     }
 
 
@@ -123,6 +130,12 @@ public class Home extends Activity {
 //            return true;
         } else if (id == R.id.action_skip_to_top) {
             skipToTop();
+            return true;
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, Settings.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.startActivity(intent);
+            this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             return true;
         }
 

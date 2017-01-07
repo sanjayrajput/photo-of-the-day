@@ -39,6 +39,7 @@ public class GlobalResources {
     private static InputStream p12AuthKeyFile;
     private static String p12AuthKeyFilePath;
     private static ExecutorService executorService;
+    private static boolean storePicInSDCard = false;
 
     public static DataBaseManager getDataBaseManager() {
         return dataBaseManager;
@@ -164,5 +165,13 @@ public class GlobalResources {
 
     public static void setExecutorService(ExecutorService executorService) {
         GlobalResources.executorService = executorService;
+    }
+
+    public static boolean isStorePicInSDCard() {
+        return storePicInSDCard;
+    }
+
+    public static void setStorePicInSDCard(boolean storePicInSDCard) {
+        GlobalResources.storePicInSDCard = storePicInSDCard;
     }
 }

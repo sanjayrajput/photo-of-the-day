@@ -10,4 +10,10 @@
     <dimen name="settings_text_right_margin">10dp</dimen>
     <dimen name="settings_text_top_margin">10dp</dimen>
     <dimen name="settings_first_text_top_margin">20dp</dimen>
+    <dimen name="horizontal_line_height">1dp</dimen>
+    <dimen name="large_spacer">3dp</dimen>
+
+    <color name="horizontal_line_fill_color">#ffff0000</color>
+    <color name="horizontal_line_fill_color_black">#FF0E0B0A</color>
+
 </resources>

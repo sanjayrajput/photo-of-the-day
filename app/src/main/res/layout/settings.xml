@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settingLinearLayout"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <!--GridLayout
         android:layout_width="match_parent"
@@ -32,11 +35,14 @@
 
     </GridLayout-->
 
+
     <RelativeLayout
+        android:id="@+id/rl_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="@dimen/settings_first_text_top_margin">
+
         <TextView
             android:id="@+id/setWallAut"
             android:layout_width="wrap_content"
@@ -56,16 +62,59 @@
             android:textSize="12sp"
             android:textColor="@color/cardview_dark_background"
             android:fontFamily="@string/font_family"
-            android:text="set homescreen wallpaper to the latest picture"
+            android:text="set latest picture as home screen wallpaper."
             android:paddingStart="@dimen/settings_text_left_margin"/>
 
         <CheckBox
-            android:layout_width="match_parent"
+            android:id="@+id/setWallAutTick"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_toRightOf="@id/setWallAutContent"
+            android:paddingStart="@dimen/settings_text_left_margin"
+            android:gravity="end"/>
+
+        <!--<include-->
+            <!--android:id="@+id/horizontal_line"-->
+            <!--layout="@layout/hor_line"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/setWallAutContent"/>-->
+
+        <TextView
+            android:id="@+id/offlineSupportMainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setWallAutContent"
+            android:textSize="16sp"
+            android:textColor="@color/cardview_dark_background"
+            android:fontFamily="@string/font_family"
+            android:text="Enable Offline Mode"
+            android:paddingStart="@dimen/settings_text_left_margin"
+            android:gravity="start"/>
+
+        <TextView
+            android:id="@+id/offlineSupportDescText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/offlineSupportMainText"
+            android:textSize="12sp"
+            android:textColor="@color/cardview_dark_background"
+            android:fontFamily="@string/font_family"
+            android:text="store images in sd card to view in offline mode."
             android:paddingStart="@dimen/settings_text_left_margin"/>
+
+        <CheckBox
+            android:id="@+id/offlineSupportTick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setWallAutContent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@id/offlineSupportDescText"
+            android:paddingStart="@dimen/settings_text_left_margin"
+            android:gravity="end"/>
     </RelativeLayout>
 
 </LinearLayout>

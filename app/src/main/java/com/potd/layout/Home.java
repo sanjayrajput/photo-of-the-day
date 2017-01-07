@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -54,6 +56,13 @@ public class Home extends Activity {
         final float scale = this.getResources().getDisplayMetrics().density;
         GlobalResources.setScale(scale);
         saveP12KeyFile();
+
+//        int setWallAutTick = R.id.setWallAutTick;
+//        View set = (View) findViewById(settings);
+//        CheckBox setWallAutCheckbox = (CheckBox) findViewById(setWallAutTick);
+//        String setAutWallPaper = GlobalResources.getInternalDBHelper().getConfigValue("setAutWallPaper");
+
+
         if (!GlobalResources.isNetworkConnected(appContext)) {
             Toast.makeText(this, "No Internet Connection",
                     Toast.LENGTH_LONG).show();
@@ -80,9 +89,6 @@ public class Home extends Activity {
             GlobalResources.setEndlessScrollListener(endlessScrollListener);
             picList.setOnScrollListener(endlessScrollListener);
         }
-
-        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
     }
 
 

@@ -1,5 +1,6 @@
 package com.potd.core;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 
 import com.potd.GlobalResources;
 import com.potd.ImageDBHelper;
+import com.potd.Utils;
 import com.potd.models.PicDetailTable;
 
 import java.io.InputStream;
@@ -23,12 +25,14 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
     private ImageView loadingAnimation;
     private String activity;
     private PicDetailTable picDetailTable;
+    private Context applicationContext;
 
-    public ImageDownloaderTask(ImageView view, ImageView animation, String activity, PicDetailTable picDetailTable) {
+    public ImageDownloaderTask(ImageView view, ImageView animation, String activity, PicDetailTable picDetailTable, Context applicationContext) {
         this.imageView = view;
         this.loadingAnimation = animation;
         this.activity = activity;
         this.picDetailTable = picDetailTable;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
             Log.i("ImageDownloaderTask", "Already downloading Image : " + picDetailTable.getSubject());
             return null;
         }
-        Bitmap bitmap = ImageDBHelper.getFromInternalStorage(imageUrl);
+        Bitmap bitmap = ImageDBHelper.getFromInternalStorage(imageUrl, picDetailTable.getDate());
         if (bitmap != null) {
             picDetailTable.setBitmap(bitmap);
             return bitmap;
@@ -55,6 +59,7 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
                 Log.i("ImageDownloaderTask", "image url : " + imageUrl);
                 InputStream in = new java.net.URL(imageUrl).openStream();
                 imageBitmap = BitmapFactory.decodeStream(in);
+//                imageBitmap = Utils.decodeSampledBitmapFromResource(in, 4096, 4096);
                 picDetailTable.setBitmap(imageBitmap);
 
                /* //---- Code to download image from Amazon DB -----
@@ -76,7 +81,7 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
                 InternalDBHelper internalDBHelper = GlobalResources.getInternalDBHelper();
                 Log.i("ImageDownloaderTask", "Putting image in internal database: " + picDetailTable.getSubject());
                 if (picDetailTable != null)
-                    internalDBHelper.insert(picDetailTable);
+                    internalDBHelper.insert(picDetailTable, applicationContext);
 
                 imageDownloaded = true;
             } catch (Exception e) {

@@ -7,8 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +18,12 @@ import android.widget.Toast;
 import com.potd.GlobalResources;
 import com.potd.ImageDBHelper;
 import com.potd.R;
+import com.potd.SDCardAdapter;
+import com.potd.Utils;
 import com.potd.core.ImageDownloaderTask;
 import com.potd.gesture.view.main.src.com.polites.android.GestureImageView;
 import com.potd.models.PicDetailTable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
@@ -107,7 +104,7 @@ public class FullScreen extends Activity {
         List<PicDetailTable> picDetailList = GlobalResources.getPicDetailList();
         final PicDetailTable picDetailTable = picDetailList.get(position);
 
-        Bitmap bitmap = ImageDBHelper.getImage(picDetailTable.getLink());
+        Bitmap bitmap = ImageDBHelper.getImage(picDetailTable.getLink(), picDetailTable.getDate());
 
         if (bitmap != null) {
 
@@ -121,7 +118,7 @@ public class FullScreen extends Activity {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    new ImageDownloaderTask(fullscreenImage, loadingImage, "FullScreen", picDetailTable).execute();
+                    new ImageDownloaderTask(fullscreenImage, loadingImage, "FullScreen", picDetailTable, getApplicationContext()).execute();
                 }
             });
             thread.start();
@@ -156,44 +153,16 @@ public class FullScreen extends Activity {
         if (picDetailTable == null)
             return null;
         Bitmap bitmap = picDetailTable.getBitmap();
-        String fileName = picDetailTable.getName();
-        String filePath = null;
-
+        String fileName = picDetailTable.getSubject();
         if (fileName == null) {
             Random rand = new Random();
             fileName = "Nat_Geo_Photo_Of_The_Day_" + rand.nextInt() + ".jpg";
+        } else {
+            fileName = Utils.replaceSpaces(fileName, "-") + ".jpg";
         }
+        String filePath = null;
         if (bitmap != null) {
-            File sdCardDirectory = Environment.getExternalStorageDirectory();
-            filePath = sdCardDirectory.getAbsolutePath() + "/PhotoOfTheDay";
-            boolean created = new File(filePath).mkdirs();
-            filePath += "/" + fileName;
-            logger.info("Path : " + filePath);
-            File image = new File(filePath);
-            if (image.exists()) {
-                if (displayAlreadyExistToast)
-                    Toast.makeText(getApplicationContext(),  "Image already exist with same name at " + filePath,
-                        Toast.LENGTH_LONG).show();
-                logger.info("Image already exist");
-                return filePath;
-            }
-            FileOutputStream outStream;
-            try {
-                outStream = new FileOutputStream(image);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-                outStream.flush();
-                outStream.close();
-                logger.info("Image saved at " + filePath);
-                if (displaySavingToast)
-                    Toast.makeText(getApplicationContext(),  "Image saved at " + filePath,
-                        Toast.LENGTH_LONG).show();
-            } catch (FileNotFoundException e) {
-                logger.info("File Not Found");
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to save image",
-                        Toast.LENGTH_LONG).show();
-                logger.log(Level.SEVERE, "Failed to save image: " + e.getMessage());
-            }
+            filePath = SDCardAdapter.store(fileName, getApplicationContext(), bitmap, displayAlreadyExistToast, displaySavingToast, true);
         }
         return filePath;
     }

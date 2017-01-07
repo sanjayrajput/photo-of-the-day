@@ -8,15 +8,15 @@ android {
         applicationId "com.photooftheday"
         minSdkVersion 17
         targetSdkVersion 21
-        versionCode 8
-        versionName "1.6"
+        versionCode 10
+        versionName "1.8"
         multiDexEnabled true
     }
 
     buildTypes {
 
         debug {
-            debuggable true
+            debuggable false
         }
 
         release {

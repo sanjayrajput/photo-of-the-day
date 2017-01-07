@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.potd.Utils;
 import com.potd.layout.FullScreen;
 import com.potd.GlobalResources;
 import com.potd.ImageDBHelper;
@@ -66,15 +67,15 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
             final PicDetailTable picDetailTable = picDetailTableList.get(position);
 
             TextView description = (TextView) row.findViewById(R.id.description);
-            description.setText(picDetailTable.getDescription());
+            description.setText(Utils.removeNonPrintableCharacters(picDetailTable.getDescription()));
 
             TextView subject = (TextView) row.findViewById(R.id.subject);
-            subject.setText(picDetailTable.getSubject());
+            subject.setText(Utils.removeNonPrintableCharacters(picDetailTable.getSubject()));
 
             if (picDetailTable.getPhotographer() != null) {
                 TextView photographer = (TextView) row.findViewById(R.id.photographer);
                 String html = "<html>" +
-                        "<p>Photography by - <i>" + picDetailTable.getPhotographer() + "</i><p>" +
+                        "<p>Photography by - <i>" + Utils.removeNonPrintableCharacters(picDetailTable.getPhotographer()) + "</i><p>" +
                         "</html>";
                 photographer.setText(Html.fromHtml(html));
 
@@ -111,7 +112,7 @@ public class PicDetailsAdapter extends ArrayAdapter<PicDetailTable> {
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
-                        new ImageDownloaderTask(image, loadingImage, "Home", picDetailTable).execute();
+                        new ImageDownloaderTask(image, loadingImage, "Home", picDetailTable, applicationContext).execute();
                     }
                 };
                 GlobalResources.getExecutorService().submit(task);

@@ -1,11 +1,16 @@
 package com.potd.core;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.LruCache;
+import android.widget.CheckBox;
 
 import com.potd.Configuration;
 import com.potd.GlobalResources;
+import com.potd.R;
 import com.potd.models.PicDetailTable;
 
 import java.util.ArrayList;
@@ -36,8 +41,27 @@ public class POTDApplication extends Application {
             GlobalResources.setDownloadingImages(new HashSet<String>());
             GlobalResources.setInternalDBHelper(new InternalDBHelper(getApplicationContext()));
             GlobalResources.setDoneLoadingLocally(false);
+//            GlobalResources.setStorePicInSDCard(true);
             GlobalResources.setP12AuthKeyFile(getAssets().open(GoogleSpreadSheetAdapter.P12FILE));
             GlobalResources.setExecutorService(new ThreadPoolExecutor(2, 5, 1000L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(1, true), new ThreadPoolExecutor.DiscardPolicy()));
+
+            String offlineMode = GlobalResources.getInternalDBHelper().getConfigValue("offlineMode");
+            if (offlineMode != null && offlineMode.equalsIgnoreCase("true")) {
+                logger.info("INIT: setting offline mode");
+                GlobalResources.setStorePicInSDCard(true);
+            }
+
+            String setAutWallPaper = GlobalResources.getInternalDBHelper().getConfigValue("setAutWallPaper");
+            if (setAutWallPaper != null && setAutWallPaper.equalsIgnoreCase("true")) {
+                Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+                final AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                logger.info("INIT: setting alarm for setting wallpaper automatically");
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis(),
+                        10 * 60 * 1000,
+                        pendingIntent);
+            }
         } catch (Exception e) {
             logger.log(Level.ALL, "Exception : " + e.getMessage());
         }

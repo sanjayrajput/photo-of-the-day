@@ -1,7 +1,13 @@
 package com.potd.models;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.potd.SDCardAdapter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -14,21 +20,62 @@ public class PicDetailTable {
     private String description;
     private Date date;
     private String link;
+    private String sdCardImageLocation;
     private Bitmap bitmap;
     private String photographer;
     private String name;
 
-    public PicDetailTable(String subject, String description, Date date, String link, Bitmap bitmap, String photographer) {
+    public PicDetailTable(String subject, String description, Date date, String link, String sdCardImageLocation, Bitmap bitmap, String photographer) {
         this.subject = subject;
         this.description = description;
         this.date = date;
         this.link = link;
+        this.sdCardImageLocation = sdCardImageLocation;
         this.name = getName(link);
         this.bitmap = bitmap;
         setPhotographer(photographer);
     }
 
     public PicDetailTable() {
+    }
+
+    public PicDetailTable(Cursor cursor) throws ParseException {
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int index = -1;
+
+        index = cursor.getColumnIndex("subject");
+        if (index >= 0)
+            this.subject = cursor.getString(index);
+
+        index = cursor.getColumnIndex("link");
+        if (index >= 0)
+            this.link = cursor.getString(index);
+
+//        index = cursor.getColumnIndex("picture");
+//        if (index >= 0) {
+//            this.bitmap = BitmapFactory.decodeByteArray(cursor.getBlob(index), 0, cursor.getBlob(index).length);
+//        }
+
+        index = cursor.getColumnIndex("sdCardImageLocation");
+        if (index >= 0) {
+            this.sdCardImageLocation = cursor.getString(index);
+            if (sdCardImageLocation != null)
+                this.bitmap = SDCardAdapter.getImage(sdCardImageLocation);
+        }
+
+        index = cursor.getColumnIndex("description");
+        if (index >= 0)
+            this.description = cursor.getString(index);
+
+        index = cursor.getColumnIndex("photographer");
+        if (index >= 0) {
+            setPhotographer(cursor.getString(index));
+        }
+
+        index = cursor.getColumnIndex("date");
+        if (index >= 0) {
+            this.date = df1.parse(cursor.getString(index));
+        }
     }
 
     public String getPhotographer() {
@@ -106,5 +153,13 @@ public class PicDetailTable {
 
     public String getName(String link) {
         return link.substring(link.lastIndexOf('/') + 1);
+    }
+
+    public String getSdCardImageLocation() {
+        return sdCardImageLocation;
+    }
+
+    public void setSdCardImageLocation(String sdCardImageLocation) {
+        this.sdCardImageLocation = sdCardImageLocation;
     }
 }

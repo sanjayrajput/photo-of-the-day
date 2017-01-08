@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+
+    <PreferenceCategory
+        android:title="PERSONALIZATION"
+        android:key="sync_category">
+
+        <CheckBoxPreference
+            android:key="set_wallpaper_aut"
+            android:summary="Update home screen wallpaper to latest picture automatically"
+            android:title="Update Wallpaper Automatically"
+            android:defaultValue="false"/>
+
+        <CheckBoxPreference
+            android:key="offline_mode"
+            android:summary="store images in sd card to be able to view them while offline"
+            android:title="Enable Offline Mode"
+            android:defaultValue="false"/>
+
+        <!--<ListPreference-->
+            <!--android:key="sync_interval"-->
+            <!--android:title="Sync interval"-->
+            <!--android:summary="Define how often sync will be performed"-->
+            <!--android:defaultValue="1000"-->
+            <!--android:entries="@array/updateInterval"-->
+            <!--android:entryValues="@array/updateIntervalValues"-->
+            <!--android:dependency="perform_sync"/>-->
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

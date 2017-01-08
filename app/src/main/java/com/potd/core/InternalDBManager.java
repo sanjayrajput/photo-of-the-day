@@ -39,8 +39,8 @@ public class InternalDBManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         logger.info("Creating Table In DB : " + InternalDBHelper.TABLE_NAME);
         db.execSQL(PIC_DETAIL_TABLE_CREATE_QUERY);
-        logger.info("Creating Table In DB : " + InternalDBHelper.CONFIG_TABLE_NAME);
-        db.execSQL(CONFIG_TABLE_CREATE_QUERY);
+//        logger.info("Creating Table In DB : " + InternalDBHelper.CONFIG_TABLE_NAME);
+//        db.execSQL(CONFIG_TABLE_CREATE_QUERY);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class InternalDBManager extends SQLiteOpenHelper {
         db.execSQL(TABLE_DELETE_QUERY);
         logger.info("Creating Table In DB : " + InternalDBHelper.TABLE_NAME);
         db.execSQL(PIC_DETAIL_TABLE_CREATE_QUERY);
-        logger.info("Creating Table In DB : " + InternalDBHelper.CONFIG_TABLE_NAME);
-        db.execSQL(CONFIG_TABLE_CREATE_QUERY);
+//        logger.info("Creating Table In DB : " + InternalDBHelper.CONFIG_TABLE_NAME);
+//        db.execSQL(CONFIG_TABLE_CREATE_QUERY);
     }
 }

@@ -138,7 +138,7 @@ public class Home extends Activity {
             skipToTop();
             return true;
         } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, Settings.class);
+            Intent intent = new Intent(this, Preferences.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.startActivity(intent);
             this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

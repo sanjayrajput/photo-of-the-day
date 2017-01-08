@@ -36,6 +36,11 @@
             android:label="Settings"
             android:theme="@android:style/Theme.Holo.Light">
         </activity>
+        <activity
+            android:name=".layout.Preferences"
+            android:label="Settings"
+            android:theme="@android:style/Theme.Holo.Light">
+        </activity>
         <receiver android:name=".core.AlarmReceiver"></receiver>
     </application>
 

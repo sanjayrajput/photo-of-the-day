@@ -45,31 +45,34 @@ public class AlarmReceiver extends BroadcastReceiver {
 //                        Looper.prepare();
                     PicDetailTable latestPicture = getLatestPictureFromDB();
                     WallpaperManager myWallpaperManager = WallpaperManager.getInstance(context);
-                    if (latestPicture == null && GlobalResources.isNetworkConnected(context)) {
-                        File sdCardDirectory = Environment.getExternalStorageDirectory();
-                        String filePath = sdCardDirectory.getAbsolutePath() + SDCardAdapter.BASE_DIRECTORY + "/" + GoogleSpreadSheetAdapter.P12FILE;
-                        logger.info("ALARM: file" + filePath);
-                        GlobalResources.setP12AuthKeyFile(new FileInputStream(filePath));
-                        GoogleSpreadSheetAdapter sheetAdapter = GlobalResources.getGoogleSpreadSheetAdapter();
-                        if (sheetAdapter == null) {
-                            logger.info("ALARM: initializing google sheet adapter");
-                            sheetAdapter = new GoogleSpreadSheetAdapter(GlobalResources.getP12AuthKeyFile());
-                            GlobalResources.setGoogleSpreadSheetAdapter(sheetAdapter);
-                        }
-                        if (GlobalResources.getGoogleSpreadSheetAdapter() != null) {
-                            try {
-                                logger.info("fetching from google spreadsheet");
-                                List<PicDetailTable> picDetailTables = GlobalResources.getGoogleSpreadSheetAdapter().get(0, 1);
-                                if (picDetailTables != null && !picDetailTables.isEmpty()) {
-                                    latestPicture = picDetailTables.get(0);
-                                    logger.info("Latest Pic - Subject: " + latestPicture.getSubject() +
-                                            ", Photographer: " + latestPicture.getPhotographer() +
-                                            ", Date: " + latestPicture.getDate() + ", Link: " + latestPicture.getLink());
+                    if (latestPicture == null) {
+                        if (GlobalResources.isNetworkConnected(context)) {
+                            File sdCardDirectory = Environment.getExternalStorageDirectory();
+                            String filePath = sdCardDirectory.getAbsolutePath() + SDCardAdapter.BASE_DIRECTORY + "/" + GoogleSpreadSheetAdapter.P12FILE;
+                            logger.info("ALARM: file" + filePath);
+                            GlobalResources.setP12AuthKeyFile(new FileInputStream(filePath));
+                            GoogleSpreadSheetAdapter sheetAdapter = GlobalResources.getGoogleSpreadSheetAdapter();
+                            if (sheetAdapter == null) {
+                                logger.info("ALARM: initializing google sheet adapter");
+                                sheetAdapter = new GoogleSpreadSheetAdapter(GlobalResources.getP12AuthKeyFile());
+                                GlobalResources.setGoogleSpreadSheetAdapter(sheetAdapter);
+                            }
+                            if (GlobalResources.getGoogleSpreadSheetAdapter() != null) {
+                                try {
+                                    logger.info("fetching from google spreadsheet");
+                                    List<PicDetailTable> picDetailTables = GlobalResources.getGoogleSpreadSheetAdapter().get(0, 1);
+                                    if (picDetailTables != null && !picDetailTables.isEmpty()) {
+                                        latestPicture = picDetailTables.get(0);
+                                        logger.info("Latest Pic - Subject: " + latestPicture.getSubject() +
+                                                ", Photographer: " + latestPicture.getPhotographer() +
+                                                ", Date: " + latestPicture.getDate() + ", Link: " + latestPicture.getLink());
+                                    }
+                                } catch (ApiException e) {
                                 }
-                            } catch (ApiException e) {}
+                            }
+                        } else {
+                            logger.info("ALARM: No internet connection");
                         }
-                    } else {
-                        logger.info("ALARM: No internet connection");
                     }
                     if (latestPicture == null)
                         return;
